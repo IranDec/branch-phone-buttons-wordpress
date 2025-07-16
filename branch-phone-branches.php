@@ -35,7 +35,9 @@ function bpb_display_buttons() {
     foreach ($branches as $branch) {
         if (empty($branch['phone'])) continue;
         echo '<a href="tel:' . esc_attr($branch['phone']) . '" style="background:' . esc_attr($branch['color']) . '" class="bpb-button">'
-           . '<i class="bpb-icon-phone"></i>' . esc_html($branch['label']) . '</a>';
+           . '<span class="bpb-button-icon"><i class="bpb-icon-phone"></i></span>'
+           . '<span class="bpb-button-label">' . esc_html($branch['label']) . '</span>'
+           . '</a>';
     }
     echo '</div>';
 }

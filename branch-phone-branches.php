@@ -27,11 +27,15 @@ function bpb_display_buttons() {
     if (empty($options['branches'])) return;
 
     $branches = $options['branches'];
+    usort($branches, function($a, $b) {
+        return ($a['order'] ?? 0) <=> ($b['order'] ?? 0);
+    });
+
     echo '<div class="bpb-container">';
     foreach ($branches as $branch) {
         if (empty($branch['phone'])) continue;
         echo '<a href="tel:' . esc_attr($branch['phone']) . '" style="background:' . esc_attr($branch['color']) . '" class="bpb-button">'
-           . esc_html($branch['label']) . '</a>';
+           . '<i class="bpb-icon-phone"></i>' . esc_html($branch['label']) . '</a>';
     }
     echo '</div>';
 }

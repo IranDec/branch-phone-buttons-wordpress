@@ -1,11 +1,19 @@
 <?php
-/*
-Plugin Name: Branch Phone Buttons
-Plugin URI: https://adschi.com/
-Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
-Version: 1.0
-Author: Mohammad Babaei
-*/
+/**
+ * Plugin Name:       Branch Phone Buttons Pro
+ * Plugin URI:        https://github.com/IranDec/branch-phone-buttons-wordpress
+ * Description:       Add professional phone buttons for each branch at the bottom of your website with icon customization, position control, and more.
+ * Version:           1.0.1
+ * Requires at least: 5.0
+ * Requires PHP:      7.4
+ * Author:            Mohammad Babaei
+ * Author URI:        https://adschi.com/
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       branch-phone-buttons
+ * Domain Path:       /languages
+ */
+
 
 if (!defined('ABSPATH')) exit;
 

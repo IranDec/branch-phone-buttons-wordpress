@@ -25,6 +25,7 @@ function bpb_render_settings_page() {
                                 نام: <input type="text" name="bpb_settings[branches][<?= $i ?>][label]" value="<?= esc_attr($branch['label']) ?>" />
                                 شماره: <input type="text" name="bpb_settings[branches][<?= $i ?>][phone]" value="<?= esc_attr($branch['phone']) ?>" />
                                 رنگ: <input type="color" name="bpb_settings[branches][<?= $i ?>][color]" value="<?= esc_attr($branch['color']) ?>" />
+                                سایز فونت: <input type="number" name="bpb_settings[branches][<?= $i ?>][font_size]" value="<?= esc_attr($branch['font_size'] ?? 14) ?>" />
                                 <input type="hidden" name="bpb_settings[branches][<?= $i ?>][order]" value="<?= $i ?>" class="bpb-order-field">
                             </td>
                         </tr>

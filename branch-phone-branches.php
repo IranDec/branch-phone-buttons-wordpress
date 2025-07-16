@@ -5,6 +5,8 @@ Plugin URI: https://adschi.com/
 Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
 Version: 1.0
 Author: Mohammad Babaei
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if (!defined('ABSPATH')) exit;

@@ -34,7 +34,11 @@ function bpb_display_buttons() {
     echo '<div class="bpb-container">';
     foreach ($branches as $branch) {
         if (empty($branch['phone'])) continue;
-        echo '<a href="tel:' . esc_attr($branch['phone']) . '" style="background:' . esc_attr($branch['color']) . '" class="bpb-button">'
+        $style = 'background:' . esc_attr($branch['color']) . ';';
+        if (!empty($branch['font_size'])) {
+            $style .= 'font-size:' . esc_attr($branch['font_size']) . 'px;';
+        }
+        echo '<a href="tel:' . esc_attr($branch['phone']) . '" style="' . $style . '" class="bpb-button">'
            . '<span class="bpb-button-icon"><i class="bpb-icon-phone"></i></span>'
            . '<span class="bpb-button-label">' . esc_html($branch['label']) . '</span>'
            . '</a>';

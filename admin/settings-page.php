@@ -20,13 +20,13 @@ function bpb_render_settings_page() {
                 <tbody>
                     <?php foreach ($settings['branches'] as $i => $branch): ?>
                         <tr class="bpb-branch-row">
-                            <th><span class="dashicons dashicons-move"></span> شعبه <?= $i + 1 ?></th>
+                            <th><span class="dashicons dashicons-move"></span> شعبه <?php echo $i + 1 ?></th>
                             <td>
-                                نام: <input type="text" name="bpb_settings[branches][<?= $i ?>][label]" value="<?= esc_attr($branch['label']) ?>" />
-                                شماره: <input type="text" name="bpb_settings[branches][<?= $i ?>][phone]" value="<?= esc_attr($branch['phone']) ?>" />
-                                رنگ: <input type="color" name="bpb_settings[branches][<?= $i ?>][color]" value="<?= esc_attr($branch['color']) ?>" />
-                                سایز فونت: <input type="number" name="bpb_settings[branches][<?= $i ?>][font_size]" value="<?= esc_attr($branch['font_size'] ?? 14) ?>" />
-                                <input type="hidden" name="bpb_settings[branches][<?= $i ?>][order]" value="<?= $i ?>" class="bpb-order-field">
+                                نام: <input type="text" name="bpb_settings[branches][<?php echo $i ?>][label]" value="<?php echo esc_attr($branch['label']) ?>" />
+                                شماره: <input type="text" name="bpb_settings[branches][<?php echo $i ?>][phone]" value="<?php echo esc_attr($branch['phone']) ?>" />
+                                رنگ: <input type="color" name="bpb_settings[branches][<?php echo $i ?>][color]" value="<?php echo esc_attr($branch['color']) ?>" />
+                                سایز فونت: <input type="number" name="bpb_settings[branches][<?php echo $i ?>][font_size]" value="<?php echo esc_attr($branch['font_size'] ?? 14) ?>" />
+                                <input type="hidden" name="bpb_settings[branches][<?php echo $i ?>][order]" value="<?php echo $i ?>" class="bpb-order-field">
                             </td>
                         </tr>
                     <?php endforeach; ?>

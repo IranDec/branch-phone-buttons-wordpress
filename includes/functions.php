@@ -7,15 +7,20 @@ function bpb_default_settings() {
         'mode' => 'branches',
         'delay' => 0,
         'display_style' => 'flat',
+        'show_only_homepage' => 0,
+        'hide_on_woo_checkout' => 1,
+        'enable_ga_tracking' => 1,
+        'biz_time_start' => '08:00',
+        'biz_time_end' => '17:00',
         'branches' => [
-            ['label' => 'شعبه شمال تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946'],
-            ['label' => 'شعبه غرب تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#f1a208'],
-            ['label' => 'شعبه مرکز تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#52b788'],
-            ['label' => 'شعبه شرق تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#118ab2'],
+            ['label' => 'شعبه شمال تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'always'],
+            ['label' => 'شعبه غرب تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#f1a208', 'timing' => 'always'],
+            ['label' => 'شعبه مرکز تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#52b788', 'timing' => 'always'],
+            ['label' => 'شعبه شرق تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#118ab2', 'timing' => 'always'],
         ],
         'contacts' => [
-            ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946'],
-            ['label' => 'ایمیل',  'value' => '', 'type' => 'mailto', 'icon' => 'email', 'color' => '#f1a208'],
+            ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'biz_hours'],
+            ['label' => 'پیامگیر',  'value' => '', 'type' => 'telegram', 'icon' => 'telegram', 'color' => '#118ab2', 'timing' => 'off_hours'],
         ]
     ];
 }

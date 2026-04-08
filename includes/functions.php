@@ -12,15 +12,18 @@ function bpb_default_settings() {
         'enable_ga_tracking' => 1,
         'biz_time_start' => '08:00',
         'biz_time_end' => '17:00',
+        'display_device' => 'mobile_only',
+        'display_pages' => [],
+        'button_shape' => 'oval',
         'branches' => [
-            ['label' => 'شعبه شمال تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'always'],
-            ['label' => 'شعبه غرب تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#f1a208', 'timing' => 'always'],
-            ['label' => 'شعبه مرکز تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#52b788', 'timing' => 'always'],
-            ['label' => 'شعبه شرق تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#118ab2', 'timing' => 'always'],
+            ['label' => 'شعبه شمال تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'always', 'animation' => 'none'],
+            ['label' => 'شعبه غرب تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#f1a208', 'timing' => 'always', 'animation' => 'none'],
+            ['label' => 'شعبه مرکز تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#52b788', 'timing' => 'always', 'animation' => 'none'],
+            ['label' => 'شعبه شرق تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#118ab2', 'timing' => 'always', 'animation' => 'none'],
         ],
         'contacts' => [
-            ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'biz_hours'],
-            ['label' => 'پیامگیر',  'value' => '', 'type' => 'telegram', 'icon' => 'telegram', 'color' => '#118ab2', 'timing' => 'off_hours'],
+            ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'biz_hours', 'animation' => 'none'],
+            ['label' => 'پیامگیر',  'value' => '', 'type' => 'telegram', 'icon' => 'telegram', 'color' => '#118ab2', 'timing' => 'off_hours', 'animation' => 'none'],
         ]
     ];
 }

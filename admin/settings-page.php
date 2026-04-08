@@ -37,7 +37,7 @@ function bpb_render_settings_page() {
     $stats = get_option('bpb_click_stats', []);
     ?>
     <div class="wrap">
-        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.2</h1>
+        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.3</h1>
         <form method="post">
             <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>
             <table class="form-table">

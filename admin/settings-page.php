@@ -55,6 +55,47 @@ function bpb_render_settings_page() {
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('نمایش در دستگاه‌ها', 'Display Devices', 'Anzeigegeräte')); ?></th>
+                    <td>
+                        <select name="bpb_settings[display_device]">
+                            <option value="mobile_only" <?php selected($settings['display_device'] ?? 'mobile_only', 'mobile_only'); ?>><?php echo esc_html(bpb_t('فقط در موبایل', 'Mobile Only', 'Nur Handy')); ?></option>
+                            <option value="desktop_only" <?php selected($settings['display_device'] ?? 'mobile_only', 'desktop_only'); ?>><?php echo esc_html(bpb_t('فقط در دسکتاپ', 'Desktop Only', 'Nur Desktop')); ?></option>
+                            <option value="all" <?php selected($settings['display_device'] ?? 'mobile_only', 'all'); ?>><?php echo esc_html(bpb_t('همه دستگاه‌ها', 'All Devices', 'Alle Geräte')); ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('شکل دکمه‌ها', 'Button Shape', 'Tastenform')); ?></th>
+                    <td>
+                        <select name="bpb_settings[button_shape]">
+                            <option value="oval" <?php selected($settings['button_shape'] ?? 'oval', 'oval'); ?>><?php echo esc_html(bpb_t('بیضی', 'Oval', 'Oval')); ?></option>
+                            <option value="circle" <?php selected($settings['button_shape'] ?? 'oval', 'circle'); ?>><?php echo esc_html(bpb_t('دایره', 'Circle', 'Kreis')); ?></option>
+                            <option value="rectangle" <?php selected($settings['button_shape'] ?? 'oval', 'rectangle'); ?>><?php echo esc_html(bpb_t('مستطیل', 'Rectangle', 'Rechteck')); ?></option>
+                            <option value="rounded" <?php selected($settings['button_shape'] ?? 'oval', 'rounded'); ?>><?php echo esc_html(bpb_t('مستطیل گوشه گرد', 'Rounded Rectangle', 'Abgerundetes Rechteck')); ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('صفحات نمایش', 'Display Pages', 'Anzeigeseiten')); ?></th>
+                    <td>
+                        <?php
+                        $pages = get_pages();
+                        $selected_pages = $settings['display_pages'] ?? [];
+                        if (empty($pages)) {
+                            echo '<p>' . esc_html(bpb_t('صفحه‌ای یافت نشد.', 'No pages found.', 'Keine Seiten gefunden.')) . '</p>';
+                        } else {
+                            echo '<div style="max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">';
+                            foreach ($pages as $page) {
+                                $checked = in_array($page->ID, $selected_pages) ? 'checked' : '';
+                                echo '<label style="display:block;"><input type="checkbox" name="bpb_settings[display_pages][]" value="' . esc_attr($page->ID) . '" ' . $checked . '> ' . esc_html($page->post_title) . '</label>';
+                            }
+                            echo '</div>';
+                            echo '<p class="description">' . esc_html(bpb_t('اگر هیچکدام انتخاب نشوند، در تمام صفحات نمایش داده می‌شود (مگر اینکه تیک صفحه اصلی زده شده باشد).', 'If none selected, it will show on all pages (unless Show only on homepage is checked).', 'Wenn nichts ausgewählt ist, wird es auf allen Seiten angezeigt (es sei denn, Nur auf Startseite anzeigen ist aktiviert).')) . '</p>';
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><?php echo esc_html(bpb_t('تأخیر نمایش (ثانیه)', 'Display Delay (sec)', 'Anzeigeverzögerung (Sek.)')); ?></th>
                     <td>
                         <input type="number" name="bpb_settings[delay]" value="<?php echo esc_attr($settings['delay'] ?? 0); ?>" min="0" />
@@ -149,6 +190,14 @@ function bpb_render_settings_page() {
                                         <option value="off_hours" <?php selected($timing, 'off_hours'); ?>><?php echo esc_html(bpb_t('فقط خارج از ساعات کاری', 'Off Hours Only', 'Nur außerhalb der Geschäftszeiten')); ?></option>
                                     </select>
 
+                                    <?php echo esc_html(bpb_t('انیمیشن', 'Animation', 'Animation')); ?>:
+                                    <?php $anim = $branch['animation'] ?? 'none'; ?>
+                                    <select name="bpb_settings[branches][<?php echo $i ?>][animation]">
+                                        <option value="none" <?php selected($anim, 'none'); ?>><?php echo esc_html(bpb_t('بدون انیمیشن', 'None', 'Keine')); ?></option>
+                                        <option value="shake" <?php selected($anim, 'shake'); ?>><?php echo esc_html(bpb_t('لرزش', 'Shake', 'Schütteln')); ?></option>
+                                        <option value="glow" <?php selected($anim, 'glow'); ?>><?php echo esc_html(bpb_t('درخشش', 'Glow', 'Glühen')); ?></option>
+                                    </select>
+
                                     <?php echo esc_html(bpb_t('رنگ', 'Color', 'Farbe')); ?>: <input type="text" class="bpb-color-picker" name="bpb_settings[branches][<?php echo $i ?>][color]" value="<?php echo esc_attr($branch['color']) ?>" />
                                     <?php echo esc_html(bpb_t('سایز فونت', 'Font Size', 'Schriftgröße')); ?>: <input type="number" name="bpb_settings[branches][<?php echo $i ?>][font_size]" value="<?php echo esc_attr($branch['font_size'] ?? 14) ?>" style="width: 60px;" />
 
@@ -205,6 +254,14 @@ function bpb_render_settings_page() {
                                         <option value="always" <?php selected($timing, 'always'); ?>><?php echo esc_html(bpb_t('همیشه', 'Always', 'Immer')); ?></option>
                                         <option value="biz_hours" <?php selected($timing, 'biz_hours'); ?>><?php echo esc_html(bpb_t('فقط در ساعات کاری', 'Business Hours Only', 'Nur Geschäftszeiten')); ?></option>
                                         <option value="off_hours" <?php selected($timing, 'off_hours'); ?>><?php echo esc_html(bpb_t('فقط خارج از ساعات کاری', 'Off Hours Only', 'Nur außerhalb der Geschäftszeiten')); ?></option>
+                                    </select>
+
+                                    <?php echo esc_html(bpb_t('انیمیشن', 'Animation', 'Animation')); ?>:
+                                    <?php $anim = $contact['animation'] ?? 'none'; ?>
+                                    <select name="bpb_settings[contacts][<?php echo $i ?>][animation]">
+                                        <option value="none" <?php selected($anim, 'none'); ?>><?php echo esc_html(bpb_t('بدون انیمیشن', 'None', 'Keine')); ?></option>
+                                        <option value="shake" <?php selected($anim, 'shake'); ?>><?php echo esc_html(bpb_t('لرزش', 'Shake', 'Schütteln')); ?></option>
+                                        <option value="glow" <?php selected($anim, 'glow'); ?>><?php echo esc_html(bpb_t('درخشش', 'Glow', 'Glühen')); ?></option>
                                     </select>
 
                                     <?php echo esc_html(bpb_t('رنگ', 'Color', 'Farbe')); ?>: <input type="text" class="bpb-color-picker" name="bpb_settings[contacts][<?php echo $i ?>][color]" value="<?php echo esc_attr($contact['color']) ?>" />
@@ -269,6 +326,10 @@ function bpb_render_settings_page() {
                 icon: '<?php echo esc_js(bpb_t("آیکون", "Icon", "Symbol")); ?>',
                 link: '<?php echo esc_js(bpb_t("لینک", "Link", "Link")); ?>',
                 display_time: '<?php echo esc_js(bpb_t("زمان نمایش", "Display Time", "Anzeigezeit")); ?>',
+                animation: '<?php echo esc_js(bpb_t("انیمیشن", "Animation", "Animation")); ?>',
+                anim_none: '<?php echo esc_js(bpb_t("بدون انیمیشن", "None", "Keine")); ?>',
+                anim_shake: '<?php echo esc_js(bpb_t("لرزش (تکان خوردن)", "Shake", "Schütteln")); ?>',
+                anim_glow: '<?php echo esc_js(bpb_t("درخشش (نور دور دکمه)", "Glow", "Glühen")); ?>',
                 always: '<?php echo esc_js(bpb_t("همیشه", "Always", "Immer")); ?>',
                 biz_hours: '<?php echo esc_js(bpb_t("فقط در ساعات کاری", "Business Hours Only", "Nur Geschäftszeiten")); ?>',
                 off_hours: '<?php echo esc_js(bpb_t("فقط خارج از ساعات کاری", "Off Hours Only", "Nur außerhalb der Geschäftszeiten")); ?>',
@@ -354,6 +415,13 @@ function bpb_render_settings_page() {
                                     <option value="always">${bpb_i18n.always}</option>
                                     <option value="biz_hours">${bpb_i18n.biz_hours}</option>
                                     <option value="off_hours">${bpb_i18n.off_hours}</option>
+                                </select>
+
+                                ${bpb_i18n.animation}:
+                                <select name="bpb_settings[${target}][${newIndex}][animation]">
+                                    <option value="none">${bpb_i18n.anim_none}</option>
+                                    <option value="shake">${bpb_i18n.anim_shake}</option>
+                                    <option value="glow">${bpb_i18n.anim_glow}</option>
                                 </select>
 
                                 ${bpb_i18n.color}: <input type="text" class="bpb-color-picker" name="bpb_settings[${target}][${newIndex}][color]" value="#000000" />

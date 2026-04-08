@@ -57,7 +57,7 @@ function bpb_admin_enqueue_assets($hook) {
 add_action('admin_enqueue_scripts', 'bpb_admin_enqueue_assets');
 
 function bpb_display_buttons() {
-    if (!wp_is_mobile()) return;
+    // We handle device checking later based on settings
 
     // Check Page Builders (Divi Visual Builder, Elementor Preview, Customizer)
     if (isset($_GET['et_fb']) && $_GET['et_fb'] === '1') return; // Divi
@@ -66,8 +66,16 @@ function bpb_display_buttons() {
 
     $options = get_option('bpb_settings', bpb_default_settings());
 
+    // Check Device Rules
+    $device = $options['display_device'] ?? 'mobile_only';
+    if ($device === 'mobile_only' && !wp_is_mobile()) return;
+    if ($device === 'desktop_only' && wp_is_mobile()) return;
+
     // Check Display Rules
     if (!empty($options['show_only_homepage']) && !is_front_page()) return;
+    if (!empty($options['display_pages']) && is_array($options['display_pages'])) {
+        if (!is_page($options['display_pages'])) return;
+    }
     if (!empty($options['hide_on_woo_checkout']) && function_exists('is_woocommerce')) {
         if (is_cart() || is_checkout()) return;
     }
@@ -88,7 +96,14 @@ function bpb_display_buttons() {
 
     $delay = isset($options['delay']) ? intval($options['delay']) * 1000 : 0;
     $display_style = isset($options['display_style']) ? $options['display_style'] : 'flat';
-    $container_class = 'bpb-container bpb-style-' . esc_attr($display_style);
+    $button_shape = isset($options['button_shape']) ? $options['button_shape'] : 'oval';
+
+    $container_class = 'bpb-container bpb-style-' . esc_attr($display_style) . ' bpb-shape-' . esc_attr($button_shape);
+    if ($device === 'mobile_only') {
+        $container_class .= ' bpb-hide-desktop';
+    } elseif ($device === 'desktop_only') {
+        $container_class .= ' bpb-hide-mobile';
+    }
 
     // Business Hours Logic
     $current_time = current_time('H:i');
@@ -117,6 +132,13 @@ function bpb_display_buttons() {
 
         $type = $branch['type'] ?? 'tel';
         $icon = $branch['icon'] ?? 'phone';
+        $animation = $branch['animation'] ?? 'none';
+        $label = $branch['label'] ?? '';
+
+        $button_class = 'bpb-button';
+        if ($animation === 'shake') $button_class .= ' bpb-anim-shake';
+        if ($animation === 'glow') $button_class .= ' bpb-anim-glow';
+        if (empty($label)) $button_class .= ' bpb-icon-only';
 
         $href = '#';
         if ($type === 'tel') $href = 'tel:' . esc_attr($val);
@@ -126,7 +148,7 @@ function bpb_display_buttons() {
         elseif ($type === 'link') $href = esc_url($val);
 
         $icon_svg = bpb_get_icon_svg($icon);
-        $safe_label = esc_js($branch['label'] ?? $type);
+        $safe_label = esc_js($label ?: $type);
 
         $onclick_parts = [];
         // GA Tracking
@@ -140,10 +162,12 @@ function bpb_display_buttons() {
 
         $onclick = ' onclick="' . implode(' ', $onclick_parts) . '"';
 
-        echo '<a href="' . $href . '" style="' . $style . '" class="bpb-button"' . $onclick . '>'
-           . '<span class="bpb-button-icon">' . $icon_svg . '</span>'
-           . '<span class="bpb-button-label">' . esc_html($branch['label'] ?? '') . '</span>'
-           . '</a>';
+        echo '<a href="' . $href . '" style="' . $style . '" class="' . esc_attr($button_class) . '"' . $onclick . '>'
+           . '<span class="bpb-button-icon">' . $icon_svg . '</span>';
+        if (!empty($label)) {
+            echo '<span class="bpb-button-label">' . esc_html($label) . '</span>';
+        }
+        echo '</a>';
     }
     echo '</div>';
 

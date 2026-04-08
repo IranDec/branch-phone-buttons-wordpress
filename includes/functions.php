@@ -7,7 +7,7 @@ function bpb_default_settings() {
         'mode' => 'branches',
         'delay' => 0,
         'display_style' => 'flat',
-        'show_only_homepage' => 0,
+        'display_location' => 'all',
         'hide_on_woo_checkout' => 1,
         'enable_ga_tracking' => 1,
         'biz_time_start' => '08:00',
@@ -49,3 +49,31 @@ register_activation_hook(__FILE__, function() {
         add_option('bpb_settings', bpb_default_settings());
     }
 });
+
+function bpb_install_db() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'bpb_clicks';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        button_label varchar(255) NOT NULL,
+        click_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        user_uuid varchar(64) NOT NULL,
+        source varchar(100) NOT NULL,
+        PRIMARY KEY  (id),
+        KEY click_time (click_time)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+
+
+function bpb_check_db_version() {
+    if (get_option('bpb_db_version') !== '1.0') {
+        bpb_install_db();
+        update_option('bpb_db_version', '1.0');
+    }
+}
+add_action('plugins_loaded', 'bpb_check_db_version');

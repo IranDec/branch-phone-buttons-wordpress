@@ -18,7 +18,8 @@ add_action('admin_menu', function() {
         bpb_t('تماس شعب', 'Branch Contact', 'Filialkontakt'),
         'manage_options',
         'bpb-settings',
-        'bpb_render_settings_page'
+        'bpb_render_settings_page',
+        'dashicons-phone'
     );
 });
 
@@ -29,15 +30,58 @@ function bpb_render_settings_page() {
     }
 
     if (isset($_POST['bpb_reset_stats']) && check_admin_referer('bpb_settings_action', 'bpb_settings_nonce')) {
-        update_option('bpb_click_stats', []);
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'bpb_clicks';
+        $wpdb->query("TRUNCATE TABLE $table_name");
         echo '<div class="updated"><p>' . esc_html(bpb_t('آمار کلیک‌ها بازنشانی شد.', 'Click stats reset.', 'Klickstatistiken zurückgesetzt.')) . '</p></div>';
     }
 
     $settings = get_option('bpb_settings', bpb_default_settings());
-    $stats = get_option('bpb_click_stats', []);
+    // Fetch advanced stats
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'bpb_clicks';
+
+    // Ensure table exists just in case
+    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
+        bpb_install_db();
+    }
+
+    $date_filter = isset($_POST['bpb_date_filter']) ? sanitize_text_field($_POST['bpb_date_filter']) : '30days';
+    $date_clause = '';
+
+    if ($date_filter === 'today') {
+        $date_clause = "WHERE DATE(click_time) = CURDATE()";
+    } elseif ($date_filter === 'yesterday') {
+        $date_clause = "WHERE DATE(click_time) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
+    } elseif ($date_filter === '7days') {
+        $date_clause = "WHERE click_time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+    } else { // 30days
+        $date_clause = "WHERE click_time >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+    }
+
+    // Queries
+    $stats_buttons = $wpdb->get_results("
+        SELECT button_label,
+               COUNT(*) as total_clicks,
+               COUNT(DISTINCT user_uuid) as unique_clicks
+        FROM $table_name
+        $date_clause
+        GROUP BY button_label
+        ORDER BY total_clicks DESC
+    ");
+
+    $stats_sources = $wpdb->get_results("
+        SELECT source,
+               COUNT(*) as total_clicks
+        FROM $table_name
+        $date_clause
+        GROUP BY source
+        ORDER BY total_clicks DESC
+    ");
+
     ?>
     <div class="wrap">
-        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.3</h1>
+        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.4</h1>
         <form method="post">
             <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>
             <table class="form-table">
@@ -114,10 +158,12 @@ function bpb_render_settings_page() {
                 <tr>
                     <th scope="row"><?php echo esc_html(bpb_t('قوانین نمایش (صفحات)', 'Display Rules (Pages)', 'Anzeigeregeln (Seiten)')); ?></th>
                     <td>
-                        <label>
-                            <input type="checkbox" name="bpb_settings[show_only_homepage]" value="1" <?php checked($settings['show_only_homepage'] ?? 0, 1); ?>>
-                            <?php echo esc_html(bpb_t('فقط در صفحه اصلی نمایش داده شود', 'Show only on homepage', 'Nur auf der Startseite anzeigen')); ?>
-                        </label><br>
+                        <select name="bpb_settings[display_location]">
+                            <option value="all" <?php selected($settings['display_location'] ?? 'all', 'all'); ?>><?php echo esc_html(bpb_t('همه صفحات', 'All Pages', 'Alle Seiten')); ?></option>
+                            <option value="homepage" <?php selected($settings['display_location'] ?? 'all', 'homepage'); ?>><?php echo esc_html(bpb_t('فقط صفحه اصلی', 'Homepage Only', 'Nur Startseite')); ?></option>
+                            <option value="specific" <?php selected($settings['display_location'] ?? 'all', 'specific'); ?>><?php echo esc_html(bpb_t('صفحات خاص (در زیر انتخاب کنید)', 'Specific Pages (Select below)', 'Bestimmte Seiten (unten auswählen)')); ?></option>
+                        </select>
+                        <br><br>
                         <label>
                             <input type="checkbox" name="bpb_settings[hide_on_woo_checkout]" value="1" <?php checked($settings['hide_on_woo_checkout'] ?? 0, 1); ?>>
                             <?php echo esc_html(bpb_t('عدم نمایش در صفحه سبد خرید و پرداخت ووکامرس', 'Hide on WooCommerce Cart & Checkout', 'Ausblenden auf WooCommerce Warenkorb & Kasse')); ?>
@@ -282,27 +328,71 @@ function bpb_render_settings_page() {
         </form>
 
         <hr>
-        <h2><?php echo esc_html(bpb_t('آمار کلیک‌ها (داخلی)', 'Click Stats (Internal)', 'Klickstatistiken (Intern)')); ?></h2>
-        <table class="widefat striped" style="max-width: 400px;">
-            <thead>
-                <tr>
-                    <th><?php echo esc_html(bpb_t('نام دکمه', 'Button Name', 'Button-Name')); ?></th>
-                    <th><?php echo esc_html(bpb_t('تعداد کلیک', 'Clicks', 'Klicks')); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($stats)): ?>
-                    <tr><td colspan="2"><?php echo esc_html(bpb_t('هنوز هیچ کلیکی ثبت نشده است.', 'No clicks recorded yet.', 'Noch keine Klicks verzeichnet.')); ?></td></tr>
-                <?php else: ?>
-                    <?php foreach ($stats as $lbl => $count): ?>
+        <h2><?php echo esc_html(bpb_t('آمار کلیک‌ها (پیشرفته)', 'Click Stats (Advanced)', 'Klickstatistiken (Erweitert)')); ?></h2>
+
+        <form method="post" style="margin-bottom: 15px;">
+            <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>
+            <select name="bpb_date_filter">
+                <option value="today" <?php selected($date_filter, 'today'); ?>><?php echo esc_html(bpb_t('امروز', 'Today', 'Heute')); ?></option>
+                <option value="yesterday" <?php selected($date_filter, 'yesterday'); ?>><?php echo esc_html(bpb_t('دیروز', 'Yesterday', 'Gestern')); ?></option>
+                <option value="7days" <?php selected($date_filter, '7days'); ?>><?php echo esc_html(bpb_t('۷ روز گذشته', 'Last 7 Days', 'Letzte 7 Tage')); ?></option>
+                <option value="30days" <?php selected($date_filter, '30days'); ?>><?php echo esc_html(bpb_t('۳۰ روز گذشته', 'Last 30 Days', 'Letzte 30 Tage')); ?></option>
+            </select>
+            <input type="submit" class="button" value="<?php echo esc_attr(bpb_t('فیلتر', 'Filter', 'Filter')); ?>">
+        </form>
+
+        <div style="display:flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <h3><?php echo esc_html(bpb_t('آمار دکمه‌ها', 'Button Stats', 'Button-Statistiken')); ?></h3>
+                <table class="widefat striped" style="max-width: 400px; min-width: 300px;">
+                    <thead>
                         <tr>
-                            <td><?php echo esc_html($lbl); ?></td>
-                            <td><?php echo intval($count); ?></td>
+                            <th><?php echo esc_html(bpb_t('نام دکمه', 'Button Name', 'Button-Name')); ?></th>
+                            <th><?php echo esc_html(bpb_t('کلیک‌های یکتا', 'Unique Clicks', 'Eindeutige Klicks')); ?></th>
+                            <th><?php echo esc_html(bpb_t('کلیک‌های کل', 'Total Clicks', 'Gesamtklicks')); ?></th>
                         </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($stats_buttons)): ?>
+                            <tr><td colspan="3"><?php echo esc_html(bpb_t('داده‌ای یافت نشد.', 'No data found.', 'Keine Daten gefunden.')); ?></td></tr>
+                        <?php else: ?>
+                            <?php foreach ($stats_buttons as $row): ?>
+                                <tr>
+                                    <td><?php echo esc_html($row->button_label); ?></td>
+                                    <td><?php echo intval($row->unique_clicks); ?></td>
+                                    <td><?php echo intval($row->total_clicks); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <h3><?php echo esc_html(bpb_t('منابع ورودی', 'Traffic Sources', 'Verkehrsquellen')); ?></h3>
+                <table class="widefat striped" style="max-width: 400px; min-width: 300px;">
+                    <thead>
+                        <tr>
+                            <th><?php echo esc_html(bpb_t('منبع', 'Source', 'Quelle')); ?></th>
+                            <th><?php echo esc_html(bpb_t('تعداد کلیک', 'Clicks', 'Klicks')); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($stats_sources)): ?>
+                            <tr><td colspan="2"><?php echo esc_html(bpb_t('داده‌ای یافت نشد.', 'No data found.', 'Keine Daten gefunden.')); ?></td></tr>
+                        <?php else: ?>
+                            <?php foreach ($stats_sources as $row): ?>
+                                <tr>
+                                    <td><?php echo esc_html($row->source); ?></td>
+                                    <td><?php echo intval($row->total_clicks); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <br>
         <form method="post" onsubmit="return confirm('<?php echo esc_js(bpb_t('آیا از پاک شدن آمار مطمئن هستید؟', 'Are you sure you want to clear the stats?', 'Sind Sie sicher, dass Sie die Statistiken löschen möchten?')); ?>');">
             <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>

@@ -81,7 +81,7 @@ function bpb_render_settings_page() {
 
     ?>
     <div class="wrap">
-        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.4</h1>
+        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.5</h1>
         <form method="post">
             <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>
             <table class="form-table">
@@ -99,13 +99,31 @@ function bpb_render_settings_page() {
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><?php echo esc_html(bpb_t('نمایش در دستگاه‌ها', 'Display Devices', 'Anzeigegeräte')); ?></th>
+                    <th scope="row"><?php echo esc_html(bpb_t('دستگاه‌های هدف', 'Target Devices', 'Zielgeräte')); ?></th>
                     <td>
-                        <select name="bpb_settings[display_device]">
-                            <option value="mobile_only" <?php selected($settings['display_device'] ?? 'mobile_only', 'mobile_only'); ?>><?php echo esc_html(bpb_t('فقط در موبایل', 'Mobile Only', 'Nur Handy')); ?></option>
-                            <option value="desktop_only" <?php selected($settings['display_device'] ?? 'mobile_only', 'desktop_only'); ?>><?php echo esc_html(bpb_t('فقط در دسکتاپ', 'Desktop Only', 'Nur Desktop')); ?></option>
-                            <option value="all" <?php selected($settings['display_device'] ?? 'mobile_only', 'all'); ?>><?php echo esc_html(bpb_t('همه دستگاه‌ها', 'All Devices', 'Alle Geräte')); ?></option>
+                        <?php $devices = $settings['devices'] ?? ['mobile']; ?>
+                        <label><input type="checkbox" name="bpb_settings[devices][]" value="mobile" <?php checked(in_array('mobile', $devices)); ?>> <?php echo esc_html(bpb_t('موبایل', 'Mobile', 'Handy')); ?></label> &nbsp;
+                        <label><input type="checkbox" name="bpb_settings[devices][]" value="tablet" <?php checked(in_array('tablet', $devices)); ?>> <?php echo esc_html(bpb_t('تبلت', 'Tablet', 'Tablet')); ?></label> &nbsp;
+                        <label><input type="checkbox" name="bpb_settings[devices][]" value="desktop" <?php checked(in_array('desktop', $devices)); ?>> <?php echo esc_html(bpb_t('دسکتاپ', 'Desktop', 'Desktop')); ?></label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('جایگاه برچسب', 'Label Position', 'Etikettenposition')); ?></th>
+                    <td>
+                        <select name="bpb_settings[label_position]">
+                            <option value="side" <?php selected($settings['label_position'] ?? 'side', 'side'); ?>><?php echo esc_html(bpb_t('کنار آیکون', 'Next to Icon', 'Neben dem Symbol')); ?></option>
+                            <option value="bottom_inside" <?php selected($settings['label_position'] ?? 'side', 'bottom_inside'); ?>><?php echo esc_html(bpb_t('زیر آیکون (داخل کادر)', 'Below Icon (Inside Box)', 'Unter Symbol (im Rahmen)')); ?></option>
+                            <option value="bottom_outside" <?php selected($settings['label_position'] ?? 'side', 'bottom_outside'); ?>><?php echo esc_html(bpb_t('زیر آیکون (خارج کادر)', 'Below Icon (Outside Box)', 'Unter Symbol (außerhalb)')); ?></option>
                         </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('ظاهر متفاوت صفحه اصلی', 'Homepage Override', 'Startseite Überschreiben')); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bpb_settings[enable_homepage_override]" value="1" <?php checked($settings['enable_homepage_override'] ?? 0, 1); ?>>
+                            <?php echo esc_html(bpb_t('فعال‌سازی تنظیمات مجزا برای صفحه اصلی (باید در بخش جداگانه تنظیم شود)', 'Enable separate settings for homepage (must configure separately)', 'Separate Einstellungen für die Startseite aktivieren')); ?>
+                        </label>
                     </td>
                 </tr>
                 <tr>

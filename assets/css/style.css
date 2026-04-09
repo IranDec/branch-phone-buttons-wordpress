@@ -80,10 +80,105 @@
     margin-top: 5px;
 }
 
-@media (min-width: 768px) {
-    .bpb-hide-desktop {
-        display: none !important;
-    }
+@media (min-width: 1025px) {
+    .bpb-hide-desktop { display: none !important; }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+    .bpb-hide-tablet { display: none !important; }
+}
+@media (max-width: 767px) {
+    .bpb-hide-mobile { display: none !important; }
+}
+
+/* Label Positions */
+.bpb-label-bottom-inside .bpb-button {
+    flex-direction: column !important;
+    padding: 10px !important;
+}
+.bpb-label-bottom-inside .bpb-button-label {
+    margin-top: 5px;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+.bpb-label-bottom-outside .bpb-button {
+    flex-direction: column !important;
+    overflow: visible !important;
+}
+.bpb-label-bottom-outside .bpb-button-label {
+    position: absolute;
+    bottom: -25px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px !important;
+    white-space: nowrap;
+}
+.bpb-label-bottom-outside .bpb-button-icon {
+    margin: 0 !important;
+}
+/* Ensure main container has space if bottom outside */
+.bpb-style-floating.bpb-label-bottom-outside {
+    margin-bottom: 25px;
+}
+
+
+/* Shape Classes */
+.bpb-shape-oval .bpb-button {
+    border-radius: 50px;
+}
+.bpb-shape-circle .bpb-button {
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+}
+.bpb-shape-rectangle .bpb-button {
+    border-radius: 0;
+}
+.bpb-shape-rounded .bpb-button {
+    border-radius: 10px;
+}
+
+/* Flat style overrides for shapes */
+.bpb-style-flat.bpb-shape-circle .bpb-button,
+.bpb-style-flat.bpb-shape-oval .bpb-button,
+.bpb-style-flat.bpb-shape-rounded .bpb-button {
+    margin: 5px;
+}
+
+/* Icon only */
+.bpb-icon-only {
+    padding: 15px !important;
+    flex-direction: row !important;
+}
+.bpb-icon-only .bpb-button-label {
+    display: none !important;
+}
+.bpb-icon-only .bpb-button-icon {
+    margin: 0 !important;
+}
+
+/* Animations */
+@keyframes bpb-shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px) rotate(-5deg); }
+    50% { transform: translateX(5px) rotate(5deg); }
+    75% { transform: translateX(-5px) rotate(-5deg); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes bpb-glow {
+    0% { box-shadow: 0 0 5px currentColor; }
+    50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+    100% { box-shadow: 0 0 5px currentColor; }
+}
+
+.bpb-anim-shake {
+    animation: bpb-shake 2s infinite;
+}
+
+.bpb-anim-glow {
+    animation: bpb-glow 2s infinite;
 }
 @media (max-width: 767px) {
     .bpb-hide-mobile {

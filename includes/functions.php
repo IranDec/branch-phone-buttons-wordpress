@@ -7,20 +7,26 @@ function bpb_default_settings() {
         'mode' => 'branches',
         'delay' => 0,
         'display_style' => 'flat',
-        'show_only_homepage' => 0,
+        'display_location' => 'all',
+        'devices' => ['mobile', 'tablet', 'desktop'],
+        'label_position' => 'side',
+        'enable_homepage_override' => 0,
         'hide_on_woo_checkout' => 1,
         'enable_ga_tracking' => 1,
         'biz_time_start' => '08:00',
         'biz_time_end' => '17:00',
+        'display_device' => 'mobile_only',
+        'display_pages' => [],
+        'button_shape' => 'oval',
         'branches' => [
-            ['label' => 'شعبه شمال تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'always'],
-            ['label' => 'شعبه غرب تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#f1a208', 'timing' => 'always'],
-            ['label' => 'شعبه مرکز تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#52b788', 'timing' => 'always'],
-            ['label' => 'شعبه شرق تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#118ab2', 'timing' => 'always'],
+            ['label' => 'شعبه شمال تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'always', 'animation' => 'none'],
+            ['label' => 'شعبه غرب تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#f1a208', 'timing' => 'always', 'animation' => 'none'],
+            ['label' => 'شعبه مرکز تهران', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#52b788', 'timing' => 'always', 'animation' => 'none'],
+            ['label' => 'شعبه شرق تهران',  'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#118ab2', 'timing' => 'always', 'animation' => 'none'],
         ],
         'contacts' => [
-            ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'biz_hours'],
-            ['label' => 'پیامگیر',  'value' => '', 'type' => 'telegram', 'icon' => 'telegram', 'color' => '#118ab2', 'timing' => 'off_hours'],
+            ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'biz_hours', 'animation' => 'none'],
+            ['label' => 'پیامگیر',  'value' => '', 'type' => 'telegram', 'icon' => 'telegram', 'color' => '#118ab2', 'timing' => 'off_hours', 'animation' => 'none'],
         ]
     ];
 }
@@ -46,3 +52,31 @@ register_activation_hook(__FILE__, function() {
         add_option('bpb_settings', bpb_default_settings());
     }
 });
+
+function bpb_install_db() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'bpb_clicks';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        button_label varchar(255) NOT NULL,
+        click_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        user_uuid varchar(64) NOT NULL,
+        source varchar(100) NOT NULL,
+        PRIMARY KEY  (id),
+        KEY click_time (click_time)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+
+
+function bpb_check_db_version() {
+    if (get_option('bpb_db_version') !== '1.0') {
+        bpb_install_db();
+        update_option('bpb_db_version', '1.0');
+    }
+}
+add_action('plugins_loaded', 'bpb_check_db_version');

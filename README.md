@@ -8,7 +8,7 @@ Tags: phone button, branches, contact, call, widget
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.2
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,8 @@ This plugin allows you to:
 * Set distance from bottom of page
 * Add custom CSS
 * Automatically purge LiteSpeed cache after saving settings
+* Setup desktop popups with copy to clipboard and integration with native apps (Gmail, Outlook, Apple Mail)
+* Display buttons manually using the `[bpb_buttons]` shortcode
 
 **Deutsch:**
 Dieses Plugin ermöglicht Ihnen:
@@ -49,6 +51,8 @@ Dieses Plugin ermöglicht Ihnen:
 * تنظیم فاصله از پایین صفحه
 * اضافه کردن CSS سفارشی
 * پاکسازی خودکار کش LiteSpeed پس از ذخیره تنظیمات
+* تنظیم پاپ‌آپ برای دسکتاپ با امکان کپی کردن و یکپارچه‌سازی با نرم‌افزارها (جیمیل، اوت‌لوک، اپل میل)
+* نمایش دستی دکمه‌ها از طریق شورت‌کد `[bpb_buttons]`
 
 == Installation ==
 
@@ -91,6 +95,12 @@ Ja. Sie können benutzerdefiniertes CSS definieren und viele visuelle Aspekte st
 بله. شما می‌توانید CSS سفارشی تعریف کنید و بسیاری از جنبه‌های بصری را کنترل کنید.
 
 == Changelog ==
+
+= 1.6 =
+* Added desktop popups and click behaviors for phone and email links (with copy feature and quick access to mail apps).
+* Added `[bpb_buttons]` shortcode.
+* افزودن پاپ‌آپ‌های دسکتاپ و تغییر رفتار کلیک برای لینک‌های تلفن و ایمیل (با قابلیت کپی و دسترسی سریع به برنامه‌های ایمیل).
+* اضافه شدن شورت‌کد `[bpb_buttons]`.
 
 = 1.2 =
 * Updated translations and settings page UI to display localized text dynamically.

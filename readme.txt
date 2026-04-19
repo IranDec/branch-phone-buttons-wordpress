@@ -4,7 +4,7 @@ Donate link: https://adschi.com/
 Tags: phone, call, button, branch
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.2
+Stable tag: 1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,13 +15,13 @@ Mobile Anruf-Buttons für verschiedene Filialen mit Farbanpassung und Admin-Pane
 == Description ==
 
 **English:**
-This plugin allows you to display a separate call button for each of your business branches on the mobile version of your website. You can customize the color, text, and phone number of each button individually.
+This plugin allows you to display a separate call button for each of your business branches on the mobile version of your website. You can customize the color, text, and phone number of each button individually. Now supports desktop popups for phone and email links (with copy feature and quick access to mail apps) and a `[bpb_buttons]` shortcode.
 
 **Deutsch:**
-Dieses Plugin ermöglicht es Ihnen, für jede Ihrer Geschäftsfilialen in der mobilen Version Ihrer Website einen separaten Anruf-Button anzuzeigen. Sie können Farbe, Text und Telefonnummer für jeden Button individuell anpassen.
+Dieses Plugin ermöglicht es Ihnen, für jede Ihrer Geschäftsfilialen in der mobilen Version Ihrer Website einen separaten Anruf-Button anzuzeigen. Sie können Farbe, Text und Telefonnummer für jeden Button individuell anpassen. Unterstützt jetzt Desktop-Popups für Telefon- und E-Mail-Links (mit Kopierfunktion und Schnellzugriff auf E-Mail-Apps) sowie einen `[bpb_buttons]` Shortcode.
 
 **Persian:**
-این پلاگین به شما این امکان را می دهد که برای هر یک از شعب کسب و کار خود، یک دکمه تماس جداگانه در نسخه موبایل سایت خود نمایش دهید. شما می توانید رنگ، متن و شماره تماس هر دکمه را به صورت جداگانه تنظیم کنید.
+این پلاگین به شما این امکان را می دهد که برای هر یک از شعب کسب و کار خود، یک دکمه تماس جداگانه در نسخه موبایل سایت خود نمایش دهید. شما می توانید رنگ، متن و شماره تماس هر دکمه را به صورت جداگانه تنظیم کنید. همچنین از پاپ‌آپ دسکتاپ برای لینک‌های تلفن و ایمیل (با قابلیت کپی و دسترسی سریع به برنامه‌های ایمیل) و شورت‌کد `[bpb_buttons]` پشتیبانی می‌کند.
 
 == Installation ==
 
@@ -69,6 +69,12 @@ Ja, dieses Plugin ist mit den meisten Standard-WordPress-Themes kompatibel.
 2. نمایی از صفحه تنظیمات پلاگین
 
 == Changelog ==
+
+= 1.6 =
+* Added desktop popups and click behaviors for phone and email links (with copy feature and quick access to mail apps).
+* Added `[bpb_buttons]` shortcode.
+* افزودن پاپ‌آپ‌های دسکتاپ و تغییر رفتار کلیک برای لینک‌های تلفن و ایمیل (با قابلیت کپی و دسترسی سریع به برنامه‌های ایمیل).
+* اضافه شدن شورت‌کد `[bpb_buttons]`.
 
 = 1.2 =
 * Updated translations and settings page UI to display localized text dynamically.

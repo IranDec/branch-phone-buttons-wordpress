@@ -67,16 +67,21 @@ function bpb_admin_enqueue_assets($hook) {
 add_action('admin_enqueue_scripts', 'bpb_admin_enqueue_assets');
 
 function bpb_display_buttons() {
+    bpb_display_buttons_html(false);
+}
 
-    // Check Page Builders (Divi Visual Builder, Elementor Preview, Customizer)
-    if (isset($_GET['et_fb']) && $_GET['et_fb'] === '1') return; // Divi
-    if (isset($_GET['elementor-preview'])) return; // Elementor
-    if (is_customize_preview()) return; // WP Customizer
+function bpb_display_buttons_html($is_shortcode = false) {
+    if (!$is_shortcode) {
+        // Check Page Builders (Divi Visual Builder, Elementor Preview, Customizer)
+        if (isset($_GET['et_fb']) && $_GET['et_fb'] === '1') return; // Divi
+        if (isset($_GET['elementor-preview'])) return; // Elementor
+        if (is_customize_preview()) return; // WP Customizer
+    }
 
     $options = get_option('bpb_settings', bpb_default_settings());
 
     // Check Homepage Override
-    if (!empty($options['enable_homepage_override']) && is_front_page()) {
+    if (!$is_shortcode && !empty($options['enable_homepage_override']) && is_front_page()) {
         $home_options = get_option('bpb_settings_home');
         if ($home_options) {
             $options = $home_options;
@@ -87,15 +92,17 @@ function bpb_display_buttons() {
     $devices = $options['devices'] ?? ['mobile'];
 
     // Check Display Rules
-    $display_location = $options['display_location'] ?? 'all';
-    if ($display_location === 'homepage' && !is_front_page()) return;
-    if ($display_location === 'specific') {
-        if (empty($options['display_pages']) || !is_page($options['display_pages'])) {
-            return;
+    if (!$is_shortcode) {
+        $display_location = $options['display_location'] ?? 'all';
+        if ($display_location === 'homepage' && !is_front_page()) return;
+        if ($display_location === 'specific') {
+            if (empty($options['display_pages']) || !is_page($options['display_pages'])) {
+                return;
+            }
         }
-    }
-    if (!empty($options['hide_on_woo_checkout']) && function_exists('is_woocommerce')) {
-        if (is_cart() || is_checkout()) return;
+        if (!empty($options['hide_on_woo_checkout']) && function_exists('is_woocommerce')) {
+            if (is_cart() || is_checkout()) return;
+        }
     }
 
     $mode = $options['mode'] ?? 'branches';
@@ -219,9 +226,26 @@ function bpb_display_buttons() {
         $ajax_url = admin_url('admin-ajax.php');
         $onclick_parts[] = "if(navigator.sendBeacon){ var fd = new FormData(); fd.append('action', 'bpb_record_click'); fd.append('button_label', '{$safe_label}'); fd.append('user_uuid', typeof bpb_uuid !== 'undefined' ? bpb_uuid : 'unknown'); fd.append('source', typeof bpb_source !== 'undefined' ? bpb_source : 'organic'); navigator.sendBeacon('{$ajax_url}', fd); } else { var xhr = new XMLHttpRequest(); xhr.open('POST', '{$ajax_url}', true); xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); xhr.send('action=bpb_record_click&button_label=' + encodeURIComponent('{$safe_label}') + '&user_uuid=' + encodeURIComponent(typeof bpb_uuid !== 'undefined' ? bpb_uuid : 'unknown') + '&source=' + encodeURIComponent(typeof bpb_source !== 'undefined' ? bpb_source : 'organic')); }";
 
+        $target_attr = '';
+        if ($type === 'tel') {
+            $phone_behavior = $options['phone_behavior'] ?? 'direct';
+            if ($phone_behavior === 'all_popup' || $phone_behavior === 'desktop_popup') {
+                $is_desktop_class = ($phone_behavior === 'desktop_popup') ? ' bpb-desktop-only-popup' : '';
+                $onclick_parts[] = "bpb_open_phone_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); return !this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768 ? false : (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768 ? true : false);";
+                $button_class .= $is_desktop_class;
+            }
+        } elseif ($type === 'mailto') {
+            $email_behavior = $options['email_behavior'] ?? 'direct';
+            if ($email_behavior === 'all_popup' || $email_behavior === 'desktop_popup') {
+                $is_desktop_class = ($email_behavior === 'desktop_popup') ? ' bpb-desktop-only-popup' : '';
+                $onclick_parts[] = "bpb_open_email_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); return !this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768 ? false : (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768 ? true : false);";
+                $button_class .= $is_desktop_class;
+            }
+        }
+
         $onclick = ' onclick="' . implode(' ', $onclick_parts) . '"';
 
-        echo '<a href="' . $href . '" style="' . $style . '" class="' . esc_attr($button_class) . '"' . $onclick . '>'
+        echo '<a href="' . $href . '" style="' . $style . '" class="' . esc_attr($button_class) . '"' . $onclick . $target_attr . '>'
            . '<span class="bpb-button-icon">' . $icon_svg . '</span>';
         if (!empty($label)) {
             echo '<span class="bpb-button-label">' . esc_html($label) . '</span>';
@@ -230,7 +254,95 @@ function bpb_display_buttons() {
     }
     echo '</div>';
 
+    // Modals HTML
+    echo '<div id="bpb-modal-overlay" class="bpb-modal-overlay" style="display:none;" onclick="bpb_close_modals()"></div>';
+
+    // Phone Modal
+    echo '<div id="bpb-phone-modal" class="bpb-modal" style="display:none;">
+        <div class="bpb-modal-header">
+            <h3>تماس با ما</h3>
+            <span class="bpb-modal-close" onclick="bpb_close_modals()">&times;</span>
+        </div>
+        <div class="bpb-modal-body">
+            <p>شماره تماس:</p>
+            <div class="bpb-copy-box">
+                <span id="bpb-phone-number-display" class="bpb-number-text"></span>
+                <button class="bpb-copy-btn" onclick="bpb_copy_to_clipboard(\'bpb-phone-number-display\')">کپی <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+                <a id="bpb-phone-call-btn" href="#" class="bpb-call-btn">انتقال به تماس گوشی <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle;"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
+            </div>
+        </div>
+    </div>';
+
+    // Email Modal
+    echo '<div id="bpb-email-modal" class="bpb-modal" style="display:none;">
+        <div class="bpb-modal-header">
+            <h3>ارسال ایمیل</h3>
+            <span class="bpb-modal-close" onclick="bpb_close_modals()">&times;</span>
+        </div>
+        <div class="bpb-modal-body">
+            <p>ایمیل ما:</p>
+            <div class="bpb-copy-box">
+                <span id="bpb-email-address-display" class="bpb-number-text"></span>
+                <button class="bpb-copy-btn" onclick="bpb_copy_to_clipboard(\'bpb-email-address-display\')">کپی <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+            </div>
+            <p style="margin-top: 15px; text-align: center; font-size: 14px; color: #666;">انتخاب سرویس ایمیل:</p>
+            <div class="bpb-email-providers">
+                <a id="bpb-email-gmail" href="#" target="_blank" class="bpb-email-provider-btn bpb-gmail-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail" width="20" height="20"> Gmail
+                </a>
+                <a id="bpb-email-outlook" href="#" target="_blank" class="bpb-email-provider-btn bpb-outlook-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" width="20" height="20"> Outlook
+                </a>
+                <a id="bpb-email-apple" href="#" class="bpb-email-provider-btn bpb-apple-btn">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Apple Mail
+                </a>
+            </div>
+        </div>
+    </div>';
+
     echo '<script>
+        function bpb_open_phone_modal(phone, desktopOnly) {
+            if (desktopOnly && window.innerWidth <= 768) return;
+            document.getElementById("bpb-phone-number-display").innerText = phone;
+            document.getElementById("bpb-phone-call-btn").href = "tel:" + phone;
+            document.getElementById("bpb-modal-overlay").style.display = "block";
+            document.getElementById("bpb-phone-modal").style.display = "block";
+        }
+        function bpb_open_email_modal(email, desktopOnly) {
+            if (desktopOnly && window.innerWidth <= 768) return;
+            document.getElementById("bpb-email-address-display").innerText = email;
+            document.getElementById("bpb-email-gmail").href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + email;
+            document.getElementById("bpb-email-outlook").href = "https://outlook.live.com/mail/0/deeplink/compose?to=" + email;
+            document.getElementById("bpb-email-apple").href = "mailto:" + email;
+            document.getElementById("bpb-modal-overlay").style.display = "block";
+            document.getElementById("bpb-email-modal").style.display = "block";
+        }
+        function bpb_close_modals() {
+            document.getElementById("bpb-modal-overlay").style.display = "none";
+            document.getElementById("bpb-phone-modal").style.display = "none";
+            document.getElementById("bpb-email-modal").style.display = "none";
+
+            // reset copy text
+            var btns = document.querySelectorAll(".bpb-copy-btn");
+            btns.forEach(function(btn) {
+                btn.innerHTML = \'کپی <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>\';
+            });
+        }
+        function bpb_copy_to_clipboard(elementId) {
+            var text = document.getElementById(elementId).innerText;
+            var elem = document.createElement("textarea");
+            document.body.appendChild(elem);
+            elem.value = text;
+            elem.select();
+            document.execCommand("copy");
+            document.body.removeChild(elem);
+
+            var btn = event.currentTarget;
+            btn.innerHTML = \'کپی شد! <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>\';
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             setTimeout(function() {
                 var container = document.getElementById("bpb-main-container");

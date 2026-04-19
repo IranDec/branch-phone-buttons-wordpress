@@ -108,6 +108,26 @@ function bpb_render_settings_page() {
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('رفتار کلیک روی تلفن', 'Phone Click Behavior', 'Verhalten bei Telefonklick')); ?></th>
+                    <td>
+                        <select name="bpb_settings[phone_behavior]">
+                            <option value="direct" <?php selected($settings['phone_behavior'] ?? 'direct', 'direct'); ?>><?php echo esc_html(bpb_t('تماس مستقیم', 'Direct Call', 'Direktanruf')); ?></option>
+                            <option value="desktop_popup" <?php selected($settings['phone_behavior'] ?? 'direct', 'desktop_popup'); ?>><?php echo esc_html(bpb_t('پاپ‌آپ (فقط دسکتاپ/لپتاپ)', 'Popup (Desktop/Laptop Only)', 'Popup (Nur Desktop/Laptop)')); ?></option>
+                            <option value="all_popup" <?php selected($settings['phone_behavior'] ?? 'direct', 'all_popup'); ?>><?php echo esc_html(bpb_t('پاپ‌آپ (همه دستگاه‌ها)', 'Popup (All Devices)', 'Popup (Alle Geräte)')); ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('رفتار کلیک روی ایمیل', 'Email Click Behavior', 'Verhalten bei E-Mail-Klick')); ?></th>
+                    <td>
+                        <select name="bpb_settings[email_behavior]">
+                            <option value="direct" <?php selected($settings['email_behavior'] ?? 'direct', 'direct'); ?>><?php echo esc_html(bpb_t('باز کردن مستقیم (mailto)', 'Direct Open (mailto)', 'Direktes Öffnen (mailto)')); ?></option>
+                            <option value="desktop_popup" <?php selected($settings['email_behavior'] ?? 'direct', 'desktop_popup'); ?>><?php echo esc_html(bpb_t('پاپ‌آپ (فقط دسکتاپ/لپتاپ)', 'Popup (Desktop/Laptop Only)', 'Popup (Nur Desktop/Laptop)')); ?></option>
+                            <option value="all_popup" <?php selected($settings['email_behavior'] ?? 'direct', 'all_popup'); ?>><?php echo esc_html(bpb_t('پاپ‌آپ (همه دستگاه‌ها)', 'Popup (All Devices)', 'Popup (Alle Geräte)')); ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><?php echo esc_html(bpb_t('جایگاه برچسب', 'Label Position', 'Etikettenposition')); ?></th>
                     <td>
                         <select name="bpb_settings[label_position]">

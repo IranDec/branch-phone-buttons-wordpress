@@ -261,7 +261,7 @@ function bpb_display_buttons_html($is_shortcode = false) {
     $modal_dir_class = $is_rtl ? 'bpb-dir-rtl' : 'bpb-dir-ltr';
 
     // Phone Modal
-    echo '<div id="bpb-phone-modal" class="bpb-modal ' . $modal_dir_class . '" style="display:none;">
+    echo '<div id="bpb-phone-modal" class="bpb-modal ' . $modal_dir_class . '" dir="' . ($is_rtl ? 'rtl' : 'ltr') . '" style="display:none;">
         <div class="bpb-modal-header">
             <h3>' . esc_html(bpb_t('تماس با ما', 'Contact Us', 'Kontaktieren Sie uns')) . '</h3>
             <span class="bpb-modal-close" onclick="bpb_close_modals()">&times;</span>
@@ -279,7 +279,7 @@ function bpb_display_buttons_html($is_shortcode = false) {
     </div>';
 
     // Email Modal
-    echo '<div id="bpb-email-modal" class="bpb-modal ' . $modal_dir_class . '" style="display:none;">
+    echo '<div id="bpb-email-modal" class="bpb-modal ' . $modal_dir_class . '" dir="' . ($is_rtl ? 'rtl' : 'ltr') . '" style="display:none;">
         <div class="bpb-modal-header">
             <h3>' . esc_html(bpb_t('ارسال ایمیل', 'Send Email', 'E-Mail senden')) . '</h3>
             <span class="bpb-modal-close" onclick="bpb_close_modals()">&times;</span>

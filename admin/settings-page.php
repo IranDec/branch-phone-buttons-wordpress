@@ -1,17 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-// Simple locale detection for translations
-function bpb_t($persian, $english, $german) {
-    $locale = function_exists('get_user_locale') ? get_user_locale() : get_locale();
-    if (strpos($locale, 'de_') === 0) {
-        return $german;
-    } elseif (strpos($locale, 'en_') === 0) {
-        return $english;
-    }
-    return $persian;
-}
-
 add_action('admin_menu', function() {
     add_menu_page(
         bpb_t('تنظیمات دکمه تماس', 'Call Button Settings', 'Anruf-Button-Einstellungen'),

@@ -261,9 +261,15 @@
     box-shadow: 0 5px 25px rgba(0,0,0,0.3);
     width: 90%;
     max-width: 350px;
+    font-family: inherit;
+}
+.bpb-modal.bpb-dir-rtl {
     text-align: right;
     direction: rtl;
-    font-family: inherit;
+}
+.bpb-modal.bpb-dir-ltr {
+    text-align: left;
+    direction: ltr;
 }
 .bpb-modal-header {
     display: flex;

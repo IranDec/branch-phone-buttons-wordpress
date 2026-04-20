@@ -257,43 +257,46 @@ function bpb_display_buttons_html($is_shortcode = false) {
     // Modals HTML
     echo '<div id="bpb-modal-overlay" class="bpb-modal-overlay" style="display:none;" onclick="bpb_close_modals()"></div>';
 
+    $is_rtl = is_rtl();
+    $modal_dir_class = $is_rtl ? 'bpb-dir-rtl' : 'bpb-dir-ltr';
+
     // Phone Modal
-    echo '<div id="bpb-phone-modal" class="bpb-modal" style="display:none;">
+    echo '<div id="bpb-phone-modal" class="bpb-modal ' . $modal_dir_class . '" style="display:none;">
         <div class="bpb-modal-header">
-            <h3>تماس با ما</h3>
+            <h3>' . esc_html(bpb_t('تماس با ما', 'Contact Us', 'Kontaktieren Sie uns')) . '</h3>
             <span class="bpb-modal-close" onclick="bpb_close_modals()">&times;</span>
         </div>
         <div class="bpb-modal-body">
-            <p>شماره تماس:</p>
+            <p>' . esc_html(bpb_t('شماره تماس:', 'Phone Number:', 'Telefonnummer:')) . '</p>
             <div class="bpb-copy-box">
                 <span id="bpb-phone-number-display" class="bpb-number-text"></span>
-                <button class="bpb-copy-btn" onclick="bpb_copy_to_clipboard(\'bpb-phone-number-display\')">کپی <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                <button class="bpb-copy-btn" onclick="bpb_copy_to_clipboard(\'bpb-phone-number-display\')">' . esc_html(bpb_t('کپی', 'Copy', 'Kopieren')) . ' <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
             </div>
             <div style="margin-top: 15px; text-align: center;">
-                <a id="bpb-phone-call-btn" href="#" class="bpb-call-btn">انتقال به تماس گوشی <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle;"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
+                <a id="bpb-phone-call-btn" href="#" class="bpb-call-btn">' . esc_html(bpb_t('انتقال به تماس گوشی', 'Call from phone', 'Vom Telefon anrufen')) . ' <svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align: middle;"><path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
             </div>
         </div>
     </div>';
 
     // Email Modal
-    echo '<div id="bpb-email-modal" class="bpb-modal" style="display:none;">
+    echo '<div id="bpb-email-modal" class="bpb-modal ' . $modal_dir_class . '" style="display:none;">
         <div class="bpb-modal-header">
-            <h3>ارسال ایمیل</h3>
+            <h3>' . esc_html(bpb_t('ارسال ایمیل', 'Send Email', 'E-Mail senden')) . '</h3>
             <span class="bpb-modal-close" onclick="bpb_close_modals()">&times;</span>
         </div>
         <div class="bpb-modal-body">
-            <p>ایمیل ما:</p>
+            <p>' . esc_html(bpb_t('ایمیل ما:', 'Our Email:', 'Unsere E-Mail:')) . '</p>
             <div class="bpb-copy-box">
                 <span id="bpb-email-address-display" class="bpb-number-text"></span>
-                <button class="bpb-copy-btn" onclick="bpb_copy_to_clipboard(\'bpb-email-address-display\')">کپی <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                <button class="bpb-copy-btn" onclick="bpb_copy_to_clipboard(\'bpb-email-address-display\')">' . esc_html(bpb_t('کپی', 'Copy', 'Kopieren')) . ' <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
             </div>
-            <p style="margin-top: 15px; text-align: center; font-size: 14px; color: #666;">انتخاب سرویس ایمیل:</p>
+            <p style="margin-top: 15px; text-align: center; font-size: 14px; color: #666;">' . esc_html(bpb_t('انتخاب سرویس ایمیل:', 'Select Email Provider:', 'E-Mail-Anbieter auswählen:')) . '</p>
             <div class="bpb-email-providers">
                 <a id="bpb-email-gmail" href="#" target="_blank" class="bpb-email-provider-btn bpb-gmail-btn">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" alt="Gmail" width="20" height="20"> Gmail
                 </a>
                 <a id="bpb-email-outlook" href="#" target="_blank" class="bpb-email-provider-btn bpb-outlook-btn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" alt="Outlook" width="20" height="20"> Outlook
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px"><path fill="#03a9f4" d="M37,42H11c-2.761,0-5-2.239-5-5V11c0-2.761,2.239-5,5-5h26c2.761,0,5,2.239,5,5v26	C42,39.761,39.761,42,37,42z"/><path fill="#fff" d="M29 33L19 33 19 28 29 28 29 33ZM29 25L19 25 19 20 29 20 29 25ZM29 17L19 17 19 15 29 15 29 17Z"/><path fill="#0277bd" d="M19,15h10v2H19V15z M19,20h10v5H19V20z M19,28h10v5H19V28z"/><path fill="#fff" d="M29,28h8v5h-8V28z M29,20h8v5h-8V20z M29,15h8v2h-8V15z M11,15h6v2h-6V15z M11,20h6v5h-6V20z M11,28h6v5h-6V28z"/></svg> Outlook
                 </a>
                 <a id="bpb-email-apple" href="#" class="bpb-email-provider-btn bpb-apple-btn">
                     <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Apple Mail
@@ -327,7 +330,7 @@ function bpb_display_buttons_html($is_shortcode = false) {
             // reset copy text
             var btns = document.querySelectorAll(".bpb-copy-btn");
             btns.forEach(function(btn) {
-                btn.innerHTML = \'کپی <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>\';
+                btn.innerHTML = \'' . esc_js(bpb_t('کپی', 'Copy', 'Kopieren')) . ' <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>\';
             });
         }
         function bpb_copy_to_clipboard(elementId) {
@@ -340,7 +343,7 @@ function bpb_display_buttons_html($is_shortcode = false) {
             document.body.removeChild(elem);
 
             var btn = event.currentTarget;
-            btn.innerHTML = \'کپی شد! <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>\';
+            btn.innerHTML = \'' . esc_js(bpb_t('کپی شد!', 'Copied!', 'Kopiert!')) . ' <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>\';
         }
 
         document.addEventListener("DOMContentLoaded", function() {

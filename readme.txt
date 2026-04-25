@@ -4,7 +4,7 @@ Donate link: https://adschi.com/
 Tags: phone, call, button, branch
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.6
+Stable tag: 1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Ja, dieses Plugin ist mit den meisten Standard-WordPress-Themes kompatibel.
 2. نمایی از صفحه تنظیمات پلاگین
 
 == Changelog ==
+
+= 1.7 =
+* Fixed an issue with desktop popups not displaying properly on Mac Safari for `tel:` and `mailto:` links.
+* رفع مشکل عدم نمایش صحیح پاپ‌آپ‌های دسکتاپ برای لینک‌های `tel:` و `mailto:` در مرورگر سافاری روی مک.
 
 = 1.6 =
 * Added desktop popups and click behaviors for phone and email links (with copy feature and quick access to mail apps).

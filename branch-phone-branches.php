@@ -3,7 +3,7 @@
 Plugin Name: Branch Phone Buttons
 Plugin URI: https://adschi.com/
 Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
-Version: 1.6
+Version: 1.7
 Requires at least: 5.0
 Tested up to: 6.5
 Author: Mohammad Babaei
@@ -231,14 +231,14 @@ function bpb_display_buttons_html($is_shortcode = false) {
             $phone_behavior = $options['phone_behavior'] ?? 'direct';
             if ($phone_behavior === 'all_popup' || $phone_behavior === 'desktop_popup') {
                 $is_desktop_class = ($phone_behavior === 'desktop_popup') ? ' bpb-desktop-only-popup' : '';
-                $onclick_parts[] = "bpb_open_phone_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); return !this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768 ? false : (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768 ? true : false);";
+                $onclick_parts[] = "bpb_open_phone_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); if (!this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768) { event.preventDefault(); return false; } else if (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768) { return true; } else { event.preventDefault(); return false; }";
                 $button_class .= $is_desktop_class;
             }
         } elseif ($type === 'mailto') {
             $email_behavior = $options['email_behavior'] ?? 'direct';
             if ($email_behavior === 'all_popup' || $email_behavior === 'desktop_popup') {
                 $is_desktop_class = ($email_behavior === 'desktop_popup') ? ' bpb-desktop-only-popup' : '';
-                $onclick_parts[] = "bpb_open_email_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); return !this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768 ? false : (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768 ? true : false);";
+                $onclick_parts[] = "bpb_open_email_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); if (!this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768) { event.preventDefault(); return false; } else if (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768) { return true; } else { event.preventDefault(); return false; }";
                 $button_class .= $is_desktop_class;
             }
         }

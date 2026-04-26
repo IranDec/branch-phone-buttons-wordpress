@@ -126,6 +126,10 @@ function bpb_display_buttons_html($is_shortcode = false) {
     $label_pos = $options['label_position'] ?? 'side';
     $container_class = 'bpb-container bpb-style-' . esc_attr($display_style) . ' bpb-shape-' . esc_attr($button_shape);
 
+    if ($is_shortcode) {
+        $container_class .= ' bpb-module';
+    }
+
     if ($label_pos === 'bottom_inside') $container_class .= ' bpb-label-bottom-inside';
     if ($label_pos === 'bottom_outside') $container_class .= ' bpb-label-bottom-outside';
 
@@ -141,10 +145,14 @@ function bpb_display_buttons_html($is_shortcode = false) {
 
     $has_items = false;
 
-    ob_start();
-    echo '<div id="bpb-main-container" class="' . $container_class . '" style="display:none;">';
+    $container_id = $is_shortcode ? 'bpb-module-container-' . uniqid() : 'bpb-main-container';
 
-    // JS helper functions to generate UUID and extract source
+    ob_start();
+    echo '<div id="' . esc_attr($container_id) . '" class="' . $container_class . '" style="display:none;">';
+
+    // JS helper functions to generate UUID and extract source (only output once per page)
+    static $bpb_global_scripts_printed = false;
+    if (!$bpb_global_scripts_printed) {
     echo '<script>
         function bpbGetUUID() {
             var uuid = localStorage.getItem("bpb_user_uuid");
@@ -181,6 +189,7 @@ function bpb_display_buttons_html($is_shortcode = false) {
         var bpb_uuid = bpbGetUUID();
         var bpb_source = bpbGetSource();
     </script>';
+    }
     foreach ($items as $branch) {
         $val = $branch['value'] ?? ($branch['phone'] ?? '');
         if (empty($val)) continue;
@@ -231,14 +240,14 @@ function bpb_display_buttons_html($is_shortcode = false) {
             $phone_behavior = $options['phone_behavior'] ?? 'direct';
             if ($phone_behavior === 'all_popup' || $phone_behavior === 'desktop_popup') {
                 $is_desktop_class = ($phone_behavior === 'desktop_popup') ? ' bpb-desktop-only-popup' : '';
-                $onclick_parts[] = "bpb_open_phone_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); if (!this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768) { event.preventDefault(); return false; } else if (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768) { return true; } else { event.preventDefault(); return false; }";
+                $onclick_parts[] = "return bpb_handle_phone_click(event, '".esc_js($val)."', this);";
                 $button_class .= $is_desktop_class;
             }
         } elseif ($type === 'mailto') {
             $email_behavior = $options['email_behavior'] ?? 'direct';
             if ($email_behavior === 'all_popup' || $email_behavior === 'desktop_popup') {
                 $is_desktop_class = ($email_behavior === 'desktop_popup') ? ' bpb-desktop-only-popup' : '';
-                $onclick_parts[] = "bpb_open_email_modal('".esc_js($val)."', this.classList.contains('bpb-desktop-only-popup')); if (!this.classList.contains('bpb-desktop-only-popup') && window.innerWidth > 768) { event.preventDefault(); return false; } else if (this.classList.contains('bpb-desktop-only-popup') && window.innerWidth <= 768) { return true; } else { event.preventDefault(); return false; }";
+                $onclick_parts[] = "return bpb_handle_email_click(event, '".esc_js($val)."', this);";
                 $button_class .= $is_desktop_class;
             }
         }
@@ -254,6 +263,18 @@ function bpb_display_buttons_html($is_shortcode = false) {
     }
     echo '</div>';
 
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                var container = document.getElementById("' . esc_js($container_id) . '");
+                if(container) {
+                    container.style.display = "flex";
+                }
+            }, ' . $delay . ');
+        });
+    </script>';
+
+    if (!$bpb_global_scripts_printed) {
     // Modals HTML
     echo '<div id="bpb-modal-overlay" class="bpb-modal-overlay" style="display:none;" onclick="bpb_close_modals()"></div>';
 
@@ -306,6 +327,24 @@ function bpb_display_buttons_html($is_shortcode = false) {
     </div>';
 
     echo '<script>
+        function bpb_handle_phone_click(e, phone, element) {
+            var isDesktopOnly = element.classList.contains("bpb-desktop-only-popup");
+            if (isDesktopOnly && window.innerWidth <= 768) {
+                return true;
+            }
+            if (e) e.preventDefault();
+            bpb_open_phone_modal(phone, isDesktopOnly);
+            return false;
+        }
+        function bpb_handle_email_click(e, email, element) {
+            var isDesktopOnly = element.classList.contains("bpb-desktop-only-popup");
+            if (isDesktopOnly && window.innerWidth <= 768) {
+                return true;
+            }
+            if (e) e.preventDefault();
+            bpb_open_email_modal(email, isDesktopOnly);
+            return false;
+        }
         function bpb_open_phone_modal(phone, desktopOnly) {
             if (desktopOnly && window.innerWidth <= 768) return;
             document.getElementById("bpb-phone-number-display").innerText = phone;
@@ -345,16 +384,10 @@ function bpb_display_buttons_html($is_shortcode = false) {
             var btn = event.currentTarget;
             btn.innerHTML = \'' . esc_js(bpb_t('کپی شد!', 'Copied!', 'Kopiert!')) . ' <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>\';
         }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(function() {
-                var container = document.getElementById("bpb-main-container");
-                if(container) {
-                    container.style.display = "flex";
-                }
-            }, ' . $delay . ');
-        });
     </script>';
+        $bpb_global_scripts_printed = true;
+    }
+
     $output = ob_get_clean();
 
     if ($has_items) {

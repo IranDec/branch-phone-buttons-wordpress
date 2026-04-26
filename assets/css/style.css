@@ -4,6 +4,17 @@
     box-sizing: border-box;
 }
 
+/* Module Mode overrides (for shortcode) */
+.bpb-module {
+    position: relative !important;
+    z-index: 1 !important;
+    bottom: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    margin: 10px 0 !important;
+}
+
 /* Flat style: Bottom full width */
 .bpb-style-flat {
     bottom: 0;
@@ -41,6 +52,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+/* Floating style in module mode */
+.bpb-module.bpb-style-floating {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .bpb-style-floating .bpb-button {

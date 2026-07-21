@@ -70,7 +70,7 @@ function bpb_render_settings_page() {
 
     ?>
     <div class="wrap">
-        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.5</h1>
+        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.8</h1>
         <form method="post">
             <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>
             <table class="form-table">
@@ -179,6 +179,7 @@ function bpb_render_settings_page() {
                         <select name="bpb_settings[display_style]">
                             <option value="flat" <?php selected($settings['display_style'] ?? 'flat', 'flat'); ?>><?php echo esc_html(bpb_t('چسبیده به پایین (کامل)', 'Sticky Bottom (Full)', 'Unten anheften (Vollständig)')); ?></option>
                             <option value="floating" <?php selected($settings['display_style'] ?? 'flat', 'floating'); ?>><?php echo esc_html(bpb_t('شناور (گرد)', 'Floating (Round)', 'Schwebend (Rund)')); ?></option>
+                            <option value="inline_floating" <?php selected($settings['display_style'] ?? 'flat', 'inline_floating'); ?>><?php echo esc_html(bpb_t('شناور یکپارچه افقی', 'Horizontal Inline Floating', 'Horizontal Schwebend')); ?></option>
                         </select>
                     </td>
                 </tr>
@@ -351,6 +352,100 @@ function bpb_render_settings_page() {
                 <p><button type="button" id="bpb-add-contact-row" class="button bpb-add-row" data-target="contacts"><?php echo esc_html(bpb_t('افزودن دکمه جدید (راه‌های ارتباطی)', 'Add New Contact Button', 'Neuen Kontakt-Button hinzufügen')); ?></button></p>
             </div>
 
+            <hr>
+            <h2><?php echo esc_html(bpb_t('تنظیمات پاپ‌آپ تبلیغاتی', 'Promotional Popup Settings', 'Einstellungen für Werbe-Popups')); ?></h2>
+            <table class="form-table">
+                <?php $popup = $settings['popup'] ?? []; ?>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('فعال‌سازی پاپ‌آپ', 'Enable Popup', 'Popup aktivieren')); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bpb_settings[popup][enable]" value="1" <?php checked($popup['enable'] ?? 0, 1); ?>>
+                            <?php echo esc_html(bpb_t('فعال باشد', 'Enabled', 'Aktiviert')); ?>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('تصویر پاپ‌آپ', 'Popup Image', 'Popup-Bild')); ?></th>
+                    <td>
+                        <input type="text" id="bpb_popup_image_url" name="bpb_settings[popup][image_url]" value="<?php echo esc_attr($popup['image_url'] ?? ''); ?>" style="width: 300px;" />
+                        <button type="button" class="button" id="bpb_upload_image_button"><?php echo esc_html(bpb_t('آپلود / انتخاب تصویر', 'Upload / Select Image', 'Bild hochladen / auswählen')); ?></button>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('عنوان پاپ‌آپ', 'Popup Title', 'Popup-Titel')); ?></th>
+                    <td><input type="text" name="bpb_settings[popup][title]" value="<?php echo esc_attr($popup['title'] ?? ''); ?>" style="width: 100%; max-width: 400px;" /></td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('توضیحات پاپ‌آپ', 'Popup Description', 'Popup-Beschreibung')); ?></th>
+                    <td><textarea name="bpb_settings[popup][description]" style="width: 100%; max-width: 400px; height: 100px;"><?php echo esc_textarea($popup['description'] ?? ''); ?></textarea></td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('دکمه ۱', 'Button 1', 'Schaltfläche 1')); ?></th>
+                    <td>
+                        <?php echo esc_html(bpb_t('متن:', 'Text:', 'Text:')); ?> <input type="text" name="bpb_settings[popup][btn1_label]" value="<?php echo esc_attr($popup['btn1_label'] ?? ''); ?>" style="width: 120px;" />
+                        <?php echo esc_html(bpb_t('شماره/لینک:', 'Value:', 'Wert:')); ?> <input type="text" name="bpb_settings[popup][btn1_val]" value="<?php echo esc_attr($popup['btn1_val'] ?? ''); ?>" style="width: 150px;" />
+                        <?php echo esc_html(bpb_t('رنگ:', 'Color:', 'Farbe:')); ?> <input type="text" class="bpb-color-picker" name="bpb_settings[popup][btn1_color]" value="<?php echo esc_attr($popup['btn1_color'] ?? '#008a47'); ?>" />
+                        <?php echo esc_html(bpb_t('آیکون:', 'Icon:', 'Symbol:')); ?>
+                        <select name="bpb_settings[popup][btn1_icon]">
+                            <option value="phone" <?php selected($popup['btn1_icon'] ?? 'phone', 'phone'); ?>>Phone</option>
+                            <option value="whatsapp" <?php selected($popup['btn1_icon'] ?? 'phone', 'whatsapp'); ?>>WhatsApp</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('دکمه ۲', 'Button 2', 'Schaltfläche 2')); ?></th>
+                    <td>
+                        <?php echo esc_html(bpb_t('متن:', 'Text:', 'Text:')); ?> <input type="text" name="bpb_settings[popup][btn2_label]" value="<?php echo esc_attr($popup['btn2_label'] ?? ''); ?>" style="width: 120px;" />
+                        <?php echo esc_html(bpb_t('شماره/لینک:', 'Value:', 'Wert:')); ?> <input type="text" name="bpb_settings[popup][btn2_val]" value="<?php echo esc_attr($popup['btn2_val'] ?? ''); ?>" style="width: 150px;" />
+                        <?php echo esc_html(bpb_t('رنگ:', 'Color:', 'Farbe:')); ?> <input type="text" class="bpb-color-picker" name="bpb_settings[popup][btn2_color]" value="<?php echo esc_attr($popup['btn2_color'] ?? '#ffb703'); ?>" />
+                        <?php echo esc_html(bpb_t('آیکون:', 'Icon:', 'Symbol:')); ?>
+                        <select name="bpb_settings[popup][btn2_icon]">
+                            <option value="phone" <?php selected($popup['btn2_icon'] ?? 'whatsapp', 'phone'); ?>>Phone</option>
+                            <option value="whatsapp" <?php selected($popup['btn2_icon'] ?? 'whatsapp', 'whatsapp'); ?>>WhatsApp</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('متن فوتر', 'Footer Text', 'Fußzeilentext')); ?></th>
+                    <td><input type="text" name="bpb_settings[popup][footer_text]" value="<?php echo esc_attr($popup['footer_text'] ?? ''); ?>" style="width: 100%; max-width: 400px;" /></td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('دفعات نمایش', 'Display Frequency', 'Anzeigehäufigkeit')); ?></th>
+                    <td>
+                        <select name="bpb_settings[popup][frequency]">
+                            <option value="every_time" <?php selected($popup['frequency'] ?? 'every_time', 'every_time'); ?>><?php echo esc_html(bpb_t('هر بار لود صفحه', 'Every time page loads', 'Jedes Mal beim Laden')); ?></option>
+                            <option value="one_time" <?php selected($popup['frequency'] ?? 'every_time', 'one_time'); ?>><?php echo esc_html(bpb_t('فقط یک بار (برای هر کاربر)', 'One time only (per user)', 'Nur einmal (pro Benutzer)')); ?></option>
+                            <option value="hourly" <?php selected($popup['frequency'] ?? 'every_time', 'hourly'); ?>><?php echo esc_html(bpb_t('هر ۱ ساعت یک بار', 'Once every hour', 'Einmal pro Stunde')); ?></option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('دستگاه‌های هدف پاپ‌آپ', 'Popup Devices', 'Popup-Geräte')); ?></th>
+                    <td>
+                        <?php $p_devices = $popup['devices'] ?? ['mobile', 'tablet', 'desktop']; ?>
+                        <label><input type="checkbox" name="bpb_settings[popup][devices][]" value="mobile" <?php checked(in_array('mobile', $p_devices)); ?>> <?php echo esc_html(bpb_t('موبایل', 'Mobile', 'Handy')); ?></label> &nbsp;
+                        <label><input type="checkbox" name="bpb_settings[popup][devices][]" value="tablet" <?php checked(in_array('tablet', $p_devices)); ?>> <?php echo esc_html(bpb_t('تبلت', 'Tablet', 'Tablet')); ?></label> &nbsp;
+                        <label><input type="checkbox" name="bpb_settings[popup][devices][]" value="desktop" <?php checked(in_array('desktop', $p_devices)); ?>> <?php echo esc_html(bpb_t('دسکتاپ', 'Desktop', 'Desktop')); ?></label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('صفحات نمایش پاپ‌آپ', 'Popup Pages', 'Popup-Seiten')); ?></th>
+                    <td>
+                        <?php
+                        $p_pages = $popup['pages'] ?? [];
+                        echo '<div style="max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">';
+                        foreach (get_pages() as $page) {
+                            $checked = in_array($page->ID, $p_pages) ? 'checked' : '';
+                            echo '<label style="display:block;"><input type="checkbox" name="bpb_settings[popup][pages][]" value="' . esc_attr($page->ID) . '" ' . $checked . '> ' . esc_html($page->post_title) . '</label>';
+                        }
+                        echo '</div>';
+                        echo '<p class="description">' . esc_html(bpb_t('اگر هیچکدام انتخاب نشوند، در تمام صفحات نمایش داده می‌شود.', 'If none selected, it will show on all pages.', 'Wenn nichts ausgewählt ist, wird es auf allen Seiten angezeigt.')) . '</p>';
+                        ?>
+                    </td>
+                </tr>
+            </table>
+
             <input type="submit" name="bpb_save" class="button button-primary" value="<?php echo esc_attr(bpb_t('ذخیره تنظیمات', 'Save Settings', 'Einstellungen speichern')); ?>">
         </form>
 
@@ -473,6 +568,28 @@ function bpb_render_settings_page() {
 
                 // Initialize Color Picker
                 $('.bpb-color-picker').wpColorPicker();
+
+                // WP Media Uploader for Popup Image
+                var mediaUploader;
+                $('#bpb_upload_image_button').click(function(e) {
+                    e.preventDefault();
+                    if (mediaUploader) {
+                        mediaUploader.open();
+                        return;
+                    }
+                    mediaUploader = wp.media.frames.file_frame = wp.media({
+                        title: '<?php echo esc_js(bpb_t("انتخاب تصویر پاپ‌آپ", "Choose Popup Image", "Popup-Bild wählen")); ?>',
+                        button: {
+                            text: '<?php echo esc_js(bpb_t("انتخاب تصویر", "Choose Image", "Bild wählen")); ?>'
+                        },
+                        multiple: false
+                    });
+                    mediaUploader.on('select', function() {
+                        var attachment = mediaUploader.state().get('selection').first().toJSON();
+                        $('#bpb_popup_image_url').val(attachment.url);
+                    });
+                    mediaUploader.open();
+                });
 
                 function initSortable(tableId) {
                     var tableBody = document.getElementById(tableId).getElementsByTagName('tbody')[0];

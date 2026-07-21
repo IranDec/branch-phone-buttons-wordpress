@@ -70,6 +70,11 @@ Ja, dieses Plugin ist mit den meisten Standard-WordPress-Themes kompatibel.
 
 == Changelog ==
 
+= 1.8 =
+* افزودن استایل جدید "شناور یکپارچه (Inline Floating)"
+* افزودن قابلیت پاپ‌آپ تبلیغاتی پیشرفته با تنظیمات زمان‌بندی و نمایش
+* امکان انتخاب استایل از طریق شورت‌کد
+
 = 1.7 =
 * Fixed an issue with desktop popups not displaying properly on Mac Safari for `tel:` and `mailto:` links.
 * رفع مشکل عدم نمایش صحیح پاپ‌آپ‌های دسکتاپ برای لینک‌های `tel:` و `mailto:` در مرورگر سافاری روی مک.

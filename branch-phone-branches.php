@@ -3,7 +3,7 @@
 Plugin Name: Branch Phone Buttons
 Plugin URI: https://adschi.com/
 Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
-Version: 1.7
+Version: 1.8
 Requires at least: 5.0
 Tested up to: 6.5
 Author: Mohammad Babaei
@@ -63,14 +63,23 @@ function bpb_admin_enqueue_assets($hook) {
     if ($hook !== 'toplevel_page_bpb-settings') return;
     wp_enqueue_style('wp-color-picker');
     wp_enqueue_script('wp-color-picker');
+    wp_enqueue_media();
 }
 add_action('admin_enqueue_scripts', 'bpb_admin_enqueue_assets');
+
+function bpb_buttons_shortcode_handler($atts = []) {
+    $atts = shortcode_atts(['style' => ''], $atts);
+    ob_start();
+    bpb_display_buttons_html(true, $atts);
+    return ob_get_clean();
+}
+add_shortcode('bpb_buttons', 'bpb_buttons_shortcode_handler');
 
 function bpb_display_buttons() {
     bpb_display_buttons_html(false);
 }
 
-function bpb_display_buttons_html($is_shortcode = false) {
+function bpb_display_buttons_html($is_shortcode = false, $atts = []) {
     if (!$is_shortcode) {
         // Check Page Builders (Divi Visual Builder, Elementor Preview, Customizer)
         if (isset($_GET['et_fb']) && $_GET['et_fb'] === '1') return; // Divi
@@ -121,6 +130,9 @@ function bpb_display_buttons_html($is_shortcode = false) {
 
     $delay = isset($options['delay']) ? intval($options['delay']) * 1000 : 0;
     $display_style = isset($options['display_style']) ? $options['display_style'] : 'flat';
+    if ($is_shortcode && !empty($atts['style'])) {
+        $display_style = $atts['style'];
+    }
     $button_shape = isset($options['button_shape']) ? $options['button_shape'] : 'oval';
 
     $label_pos = $options['label_position'] ?? 'side';
@@ -393,6 +405,117 @@ function bpb_display_buttons_html($is_shortcode = false) {
     if ($has_items) {
         echo $output;
     }
+
+    if (!$is_shortcode && !empty($options['popup']['enable'])) {
+        bpb_display_popup_banner($options['popup'], $devices);
+    }
+}
+
+function bpb_display_popup_banner($popup, $main_devices) {
+    // Check pages rule
+    if (!empty($popup['pages']) && !is_page($popup['pages']) && !is_front_page()) {
+        if (!(in_array(get_option('page_on_front'), $popup['pages']) && is_front_page())) {
+            return;
+        }
+    }
+
+    // Determine device classes
+    $devices = $popup['devices'] ?? $main_devices;
+    $device_classes = [];
+    if (!in_array('mobile', $devices)) $device_classes[] = 'bpb-hide-mobile';
+    if (!in_array('tablet', $devices)) $device_classes[] = 'bpb-hide-tablet';
+    if (!in_array('desktop', $devices)) $device_classes[] = 'bpb-hide-desktop';
+    
+    $container_class = implode(' ', $device_classes);
+    $freq = $popup['frequency'] ?? 'every_time';
+    
+    $is_rtl = is_rtl();
+    $dir_attr = $is_rtl ? 'rtl' : 'ltr';
+
+    echo '<div id="bpb-popup-banner-overlay" class="bpb-popup-overlay ' . esc_attr($container_class) . '" style="display:none;" onclick="bpb_close_popup_banner(event)">';
+    echo '  <div class="bpb-popup-box" dir="' . $dir_attr . '">';
+    echo '      <span class="bpb-popup-close" onclick="bpb_close_popup_banner(event)">&times;</span>';
+    
+    if (!empty($popup['image_url'])) {
+        echo '      <div class="bpb-popup-image-container">';
+        echo '          <img src="' . esc_url($popup['image_url']) . '" alt="Popup Image" />';
+        echo '      </div>';
+    }
+    
+    echo '      <div class="bpb-popup-content">';
+    if (!empty($popup['title'])) {
+        echo '          <h2 class="bpb-popup-title">' . esc_html($popup['title']) . '</h2>';
+    }
+    if (!empty($popup['description'])) {
+        echo '          <p class="bpb-popup-desc">' . nl2br(esc_html($popup['description'])) . '</p>';
+    }
+    
+    echo '          <div class="bpb-popup-buttons">';
+    
+    if (!empty($popup['btn1_val'])) {
+        $btn1_href = (strpos($popup['btn1_val'], '@') !== false && strpos($popup['btn1_val'], 'http') === false) ? 'mailto:' . $popup['btn1_val'] : (is_numeric(str_replace(['+', '-', ' '], '', $popup['btn1_val'])) ? 'tel:' . $popup['btn1_val'] : $popup['btn1_val']);
+        echo '              <a href="' . esc_url($btn1_href) . '" class="bpb-popup-btn" style="background-color: ' . esc_attr($popup['btn1_color']) . '">';
+        echo '                  <span class="bpb-popup-btn-icon">' . bpb_get_icon_svg($popup['btn1_icon'] ?? 'phone') . '</span>';
+        echo '                  <span class="bpb-popup-btn-text" dir="ltr">' . esc_html($popup['btn1_label']) . '</span>';
+        echo '              </a>';
+    }
+    
+    if (!empty($popup['btn2_val'])) {
+        $btn2_href = 'https://wa.me/' . ltrim(str_replace(['+', '-', ' '], '', $popup['btn2_val']), '0');
+        if ($popup['btn2_icon'] !== 'whatsapp') {
+            $btn2_href = (strpos($popup['btn2_val'], '@') !== false && strpos($popup['btn2_val'], 'http') === false) ? 'mailto:' . $popup['btn2_val'] : (is_numeric(str_replace(['+', '-', ' '], '', $popup['btn2_val'])) ? 'tel:' . $popup['btn2_val'] : $popup['btn2_val']);
+        }
+        echo '              <a href="' . esc_url($btn2_href) . '" class="bpb-popup-btn" style="background-color: ' . esc_attr($popup['btn2_color']) . '">';
+        echo '                  <span class="bpb-popup-btn-icon">' . bpb_get_icon_svg($popup['btn2_icon'] ?? 'whatsapp') . '</span>';
+        echo '                  <span class="bpb-popup-btn-text" dir="ltr">' . esc_html($popup['btn2_label']) . '</span>';
+        echo '              </a>';
+    }
+    
+    echo '          </div>'; // End buttons
+    
+    if (!empty($popup['footer_text'])) {
+        echo '          <div class="bpb-popup-footer">' . esc_html($popup['footer_text']) . '</div>';
+    }
+    
+    echo '      </div>'; // End content
+    echo '  </div>'; // End box
+    echo '</div>'; // End overlay
+    
+    echo '<script>
+        function bpb_close_popup_banner(e) {
+            if (e.target.id === "bpb-popup-banner-overlay" || e.target.classList.contains("bpb-popup-close")) {
+                document.getElementById("bpb-popup-banner-overlay").style.display = "none";
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            var freq = "' . esc_js($freq) . '";
+            var show = true;
+            if (freq === "one_time") {
+                if (localStorage.getItem("bpb_popup_shown")) {
+                    show = false;
+                }
+            } else if (freq === "hourly") {
+                var lastShown = localStorage.getItem("bpb_popup_shown_time");
+                if (lastShown && (Date.now() - lastShown < 3600000)) {
+                    show = false;
+                }
+            }
+            
+            if (show) {
+                setTimeout(function() {
+                    var overlay = document.getElementById("bpb-popup-banner-overlay");
+                    if (overlay && window.getComputedStyle(overlay).display !== "none") {
+                        overlay.style.display = "flex";
+                        if (freq === "one_time") {
+                            localStorage.setItem("bpb_popup_shown", "1");
+                        } else if (freq === "hourly") {
+                            localStorage.setItem("bpb_popup_shown_time", Date.now());
+                        }
+                    }
+                }, 1000); // Small delay to let page load
+            }
+        });
+    </script>';
 }
 add_action('wp_footer', 'bpb_display_buttons');
 

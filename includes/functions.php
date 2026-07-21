@@ -40,6 +40,24 @@ function bpb_default_settings() {
         'contacts' => [
             ['label' => 'تماس', 'value' => '', 'type' => 'tel', 'icon' => 'phone', 'color' => '#e63946', 'timing' => 'biz_hours', 'animation' => 'none'],
             ['label' => 'پیامگیر',  'value' => '', 'type' => 'telegram', 'icon' => 'telegram', 'color' => '#118ab2', 'timing' => 'off_hours', 'animation' => 'none'],
+        ],
+        'popup' => [
+            'enable' => 0,
+            'image_url' => '',
+            'title' => 'اسباب‌کشی راحت، بدون دردسر!',
+            'description' => 'با اتوبار نمونه، تمام اثاثیه شما با دقت، سرعت و ایمنی کامل منتقل می‌شود. همین الان تماس بگیرید و از تخفیف 15% اولین بار استفاده کنید!',
+            'btn1_label' => 'تماس فوری:',
+            'btn1_val' => '',
+            'btn1_color' => '#008a47',
+            'btn1_icon' => 'phone',
+            'btn2_label' => 'پیام در واتساپ',
+            'btn2_val' => '',
+            'btn2_color' => '#ffb703',
+            'btn2_icon' => 'whatsapp',
+            'footer_text' => 'ساعت کاری: 7 صبح تا 10 شب - هر روز هفته',
+            'pages' => [],
+            'devices' => ['mobile', 'tablet', 'desktop'],
+            'frequency' => 'every_time', // every_time, one_time, hourly
         ]
     ];
 }

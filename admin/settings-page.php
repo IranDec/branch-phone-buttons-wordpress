@@ -375,6 +375,13 @@ function bpb_render_settings_page() {
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row"><?php echo esc_html(bpb_t('برچسب بالای پاپ‌آپ', 'Popup Badge', 'Popup-Abzeichen')); ?></th>
+                    <td>
+                        <input type="text" name="bpb_settings[popup][badge_text]" value="<?php echo esc_attr($popup['badge_text'] ?? ''); ?>" style="width: 100%; max-width: 400px;" placeholder="<?php echo esc_attr(bpb_t('مثلاً: ویژه امروز 🎁', 'e.g. Special Today 🎁', 'z.B. Heute Besonders 🎁')); ?>" />
+                        <p class="description"><?php echo esc_html(bpb_t('برچسب کوچک زرد بالای عنوان (اختیاری). برای پنهان کردن، خالی بگذارید.', 'Small yellow badge above the title (optional). Leave empty to hide.', 'Kleines gelbes Abzeichen über dem Titel (optional). Leer lassen zum Ausblenden.')); ?></p>
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row"><?php echo esc_html(bpb_t('عنوان پاپ‌آپ', 'Popup Title', 'Popup-Titel')); ?></th>
                     <td><input type="text" name="bpb_settings[popup][title]" value="<?php echo esc_attr($popup['title'] ?? ''); ?>" style="width: 100%; max-width: 400px;" /></td>
                 </tr>

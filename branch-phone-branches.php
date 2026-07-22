@@ -457,11 +457,14 @@ function bpb_display_popup_banner($popup, $main_devices) {
     }
     
     echo '      <div class="bpb-popup-content">';
+    if (!empty($popup['badge_text'])) {
+        echo '          <div class="bpb-popup-badge">' . esc_html($popup['badge_text']) . '</div>';
+    }
     if (!empty($popup['title'])) {
         echo '          <h2 class="bpb-popup-title">' . esc_html($popup['title']) . '</h2>';
     }
     if (!empty($popup['description'])) {
-        echo '          <p class="bpb-popup-desc">' . nl2br(esc_html($popup['description'])) . '</p>';
+        echo '          <p class="bpb-popup-desc">' . nl2br(wp_kses($popup['description'], ['b' => [], 'strong' => [], 'span' => ['style' => []]])) . '</p>';
     }
     
     echo '          <div class="bpb-popup-buttons">';

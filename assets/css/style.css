@@ -541,12 +541,6 @@
     direction: ltr;
 }
 
-@media (max-width: 480px) {
-    .bpb-style-twin_card {
-        flex-direction: column;
-    }
-}
-
 /* Popup Banner */
 .bpb-popup-overlay {
     position: fixed;

@@ -4,7 +4,7 @@ Donate link: https://adschi.com/
 Tags: phone, call, button, branch
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,9 @@ Ja, dieses Plugin ist mit den meisten Standard-WordPress-Themes kompatibel.
 2. نمایی از صفحه تنظیمات پلاگین
 
 == Changelog ==
+
+= 1.8.4 =
+* رفع مشکل نمایش ستونی (زیر هم) دکمه‌های کارت "twin_card" روی موبایل به‌جای کنار هم
 
 = 1.8.3 =
 * رفع مشکل کش شدن فایل CSS (نسخه ثابت استایل باعث می‌شد مرورگر/کش سرور، استایل قدیمی را نمایش دهد و ظاهر دکمه‌ها روی برخی دستگاه‌ها اشتباه دیده شود)

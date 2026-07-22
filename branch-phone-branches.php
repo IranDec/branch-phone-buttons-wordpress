@@ -3,7 +3,7 @@
 Plugin Name: Branch Phone Buttons
 Plugin URI: https://adschi.com/
 Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
-Version: 1.8.2
+Version: 1.8.3
 Requires at least: 5.0
 Tested up to: 6.5
 Author: Mohammad Babaei
@@ -55,7 +55,9 @@ require_once BPB_PATH . 'includes/functions.php';
 require_once BPB_PATH . 'admin/settings-page.php';
 
 function bpb_enqueue_assets() {
-    wp_enqueue_style('bpb-style', BPB_URL . 'assets/css/style.css', [], '1.1');
+    $style_path = BPB_PATH . 'assets/css/style.css';
+    $version = file_exists($style_path) ? filemtime($style_path) : '1.1';
+    wp_enqueue_style('bpb-style', BPB_URL . 'assets/css/style.css', [], $version);
 }
 add_action('wp_enqueue_scripts', 'bpb_enqueue_assets');
 

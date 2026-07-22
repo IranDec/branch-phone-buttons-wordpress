@@ -3,7 +3,7 @@
 Plugin Name: Branch Phone Buttons
 Plugin URI: https://adschi.com/
 Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
-Version: 1.8.1
+Version: 1.8.2
 Requires at least: 5.0
 Tested up to: 6.5
 Author: Mohammad Babaei
@@ -290,14 +290,21 @@ function bpb_display_buttons_html($is_shortcode = false, $atts = []) {
     echo '</div>';
 
     echo '<script>
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(function() {
-                var container = document.getElementById("' . esc_js($container_id) . '");
-                if(container) {
-                    container.style.display = "flex";
-                }
-            }, ' . $delay . ');
-        });
+        (function() {
+            function bpbRevealContainer() {
+                setTimeout(function() {
+                    var container = document.getElementById("' . esc_js($container_id) . '");
+                    if(container) {
+                        container.style.display = "flex";
+                    }
+                }, ' . $delay . ');
+            }
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", bpbRevealContainer);
+            } else {
+                bpbRevealContainer();
+            }
+        })();
     </script>';
 
     if (!$bpb_global_scripts_printed) {
@@ -504,7 +511,7 @@ function bpb_display_popup_banner($popup, $main_devices) {
                 document.getElementById("bpb-popup-banner-overlay").style.display = "none";
             }
         }
-        document.addEventListener("DOMContentLoaded", function() {
+        function bpbInitPopupBanner() {
             var freq = "' . esc_js($freq) . '";
             var show = true;
             if (freq === "one_time") {
@@ -517,7 +524,7 @@ function bpb_display_popup_banner($popup, $main_devices) {
                     show = false;
                 }
             }
-            
+
             if (show) {
                 setTimeout(function() {
                     var overlay = document.getElementById("bpb-popup-banner-overlay");
@@ -531,7 +538,12 @@ function bpb_display_popup_banner($popup, $main_devices) {
                     }
                 }, 1000); // Small delay to let page load
             }
-        });
+        }
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", bpbInitPopupBanner);
+        } else {
+            bpbInitPopupBanner();
+        }
     </script>';
 }
 add_action('wp_footer', 'bpb_display_buttons');

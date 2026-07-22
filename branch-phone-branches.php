@@ -3,7 +3,7 @@
 Plugin Name: Branch Phone Buttons
 Plugin URI: https://adschi.com/
 Description: دکمه تماس برای شعب مختلف مخصوص موبایل با قابلیت تنظیم رنگ و نمایش تبلیغ در پنل
-Version: 1.8
+Version: 1.8.1
 Requires at least: 5.0
 Tested up to: 6.5
 Author: Mohammad Babaei
@@ -68,7 +68,7 @@ function bpb_admin_enqueue_assets($hook) {
 add_action('admin_enqueue_scripts', 'bpb_admin_enqueue_assets');
 
 function bpb_buttons_shortcode_handler($atts = []) {
-    $atts = shortcode_atts(['style' => ''], $atts);
+    $atts = shortcode_atts(['style' => '', 'title' => ''], $atts);
     ob_start();
     bpb_display_buttons_html(true, $atts);
     return ob_get_clean();
@@ -158,9 +158,14 @@ function bpb_display_buttons_html($is_shortcode = false, $atts = []) {
     $has_items = false;
 
     $container_id = $is_shortcode ? 'bpb-module-container-' . uniqid() : 'bpb-main-container';
+    $twin_card_title = ($is_shortcode && $display_style === 'twin_card') ? trim($atts['title'] ?? '') : '';
 
     ob_start();
     echo '<div id="' . esc_attr($container_id) . '" class="' . $container_class . '" style="display:none;">';
+
+    if ($twin_card_title !== '') {
+        echo '<div class="bpb-twin-card-title">' . esc_html($twin_card_title) . '</div>';
+    }
 
     // JS helper functions to generate UUID and extract source (only output once per page)
     static $bpb_global_scripts_printed = false;
@@ -268,7 +273,16 @@ function bpb_display_buttons_html($is_shortcode = false, $atts = []) {
 
         echo '<a href="' . $href . '" style="' . $style . '" class="' . esc_attr($button_class) . '"' . $onclick . $target_attr . '>'
            . '<span class="bpb-button-icon">' . $icon_svg . '</span>';
-        if (!empty($label)) {
+        if ($display_style === 'twin_card') {
+            echo '<span class="bpb-button-text">';
+            if (!empty($label)) {
+                echo '<span class="bpb-button-label">' . esc_html($label) . '</span>';
+            }
+            if ($type === 'tel') {
+                echo '<span class="bpb-button-value" dir="ltr">' . esc_html($val) . '</span>';
+            }
+            echo '</span>';
+        } elseif (!empty($label)) {
             echo '<span class="bpb-button-label">' . esc_html($label) . '</span>';
         }
         echo '</a>';
@@ -504,7 +518,7 @@ function bpb_display_popup_banner($popup, $main_devices) {
             if (show) {
                 setTimeout(function() {
                     var overlay = document.getElementById("bpb-popup-banner-overlay");
-                    if (overlay && window.getComputedStyle(overlay).display !== "none") {
+                    if (overlay) {
                         overlay.style.display = "flex";
                         if (freq === "one_time") {
                             localStorage.setItem("bpb_popup_shown", "1");

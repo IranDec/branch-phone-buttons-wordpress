@@ -4,7 +4,7 @@ Donate link: https://adschi.com/
 Tags: phone, call, button, branch
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 1.7
+Stable tag: 1.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,11 @@ Ja, dieses Plugin ist mit den meisten Standard-WordPress-Themes kompatibel.
 2. نمایی از صفحه تنظیمات پلاگین
 
 == Changelog ==
+
+= 1.8.1 =
+* رفع خطای Fatal ناشی از تعریف تکراری تابع شورت‌کد
+* رفع مشکل عدم نمایش پاپ‌آپ تبلیغاتی
+* افزودن استایل جدید "کارت دوقلو" برای نمایش درون‌متنی با شورت‌کد
 
 = 1.8 =
 * افزودن استایل جدید "شناور یکپارچه (Inline Floating)"

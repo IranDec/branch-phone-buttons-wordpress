@@ -70,7 +70,7 @@ function bpb_render_settings_page() {
 
     ?>
     <div class="wrap">
-        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.8</h1>
+        <h1><?php echo esc_html(bpb_t('تنظیمات دکمه تماس شعب', 'Branch Phone Button Settings', 'Filial-Anruf-Button-Einstellungen')); ?> - نسخه 1.8.1</h1>
         <form method="post">
             <?php wp_nonce_field('bpb_settings_action', 'bpb_settings_nonce'); ?>
             <table class="form-table">
@@ -180,7 +180,9 @@ function bpb_render_settings_page() {
                             <option value="flat" <?php selected($settings['display_style'] ?? 'flat', 'flat'); ?>><?php echo esc_html(bpb_t('چسبیده به پایین (کامل)', 'Sticky Bottom (Full)', 'Unten anheften (Vollständig)')); ?></option>
                             <option value="floating" <?php selected($settings['display_style'] ?? 'flat', 'floating'); ?>><?php echo esc_html(bpb_t('شناور (گرد)', 'Floating (Round)', 'Schwebend (Rund)')); ?></option>
                             <option value="inline_floating" <?php selected($settings['display_style'] ?? 'flat', 'inline_floating'); ?>><?php echo esc_html(bpb_t('شناور یکپارچه افقی', 'Horizontal Inline Floating', 'Horizontal Schwebend')); ?></option>
+                            <option value="twin_card" <?php selected($settings['display_style'] ?? 'flat', 'twin_card'); ?>><?php echo esc_html(bpb_t('کارت دوقلو (درون‌متنی)', 'Twin Card (Inline)', 'Twin Card (Inline)')); ?></option>
                         </select>
+                        <p class="description"><?php echo esc_html(bpb_t('استایل «کارت دوقلو» برای استفاده درون متن با شورت‌کد ساخته شده است: [bpb_buttons style="twin_card" title="عنوان دلخواه"]', 'The "Twin Card" style is meant for inline use via shortcode: [bpb_buttons style="twin_card" title="Your Title"]', 'Der Stil "Twin Card" ist für die Inline-Verwendung über Shortcode gedacht: [bpb_buttons style="twin_card" title="Ihr Titel"]')); ?></p>
                     </td>
                 </tr>
                 <tr>

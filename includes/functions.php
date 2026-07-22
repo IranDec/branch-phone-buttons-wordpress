@@ -78,18 +78,6 @@ function bpb_get_icon_svg($icon) {
     }
 }
 
-// Add a shortcode to display buttons inside pages/posts manually
-add_shortcode('bpb_buttons', 'bpb_buttons_shortcode_handler');
-function bpb_buttons_shortcode_handler($atts) {
-    ob_start();
-    // Temporarily trick the display function into rendering by hooking it here if we refactor or just call a rendering helper
-    // To keep it simple, we'll implement a static inline style wrapper for shortcodes
-    if (function_exists('bpb_display_buttons_html')) {
-        bpb_display_buttons_html(true);
-    }
-    return ob_get_clean();
-}
-
 register_activation_hook(__FILE__, function() {
     if (!get_option('bpb_settings')) {
         add_option('bpb_settings', bpb_default_settings());
